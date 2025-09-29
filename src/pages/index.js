@@ -332,8 +332,8 @@ class IndexPage {
     }
 
     formatAddress(address, length = 6) {
-        if (!address || address.length < 10) return address;
-        return `${address.slice(0, length)}...${address.slice(-4)}`;
+        return window.CoreUtils ? window.CoreUtils.formatAddress(address, length) : 
+               (address ? `${address.slice(0, length)}...${address.slice(-4)}` : address);
     }
 
     // ========================================================================

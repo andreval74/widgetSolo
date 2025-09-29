@@ -1,57 +1,88 @@
 /**
  * ================================================================================
- * AUTH.JS - Sistema de Autenticação Web3
+ * AUTH PAGE - Sistema de Autenticação Web3 (Otimizado)
  * ================================================================================
- * Gerenciamento de autenticação via MetaMask e controle de usuários
+ * Página de autenticação que usa AuthManager centralizado
+ * Remove duplicações e delega para módulos centrais
  * ================================================================================
  */
 
-class Web3Auth {
+class AuthPageController {
     constructor() {
+        this.authManager = null;
+        this.web3Manager = null;
         this.currentAddress = null;
         this.userType = null;
         this.authToken = null;
+        
+        this.init();
     }
 
-    // Conectar carteira MetaMask
+    async init() {
+        console.log('🚀 Inicializando página de autenticação...');
+        
+        // Aguardar carregamento dos managers
+        await this.waitForManagers();
+        
+        // Verificar se já está conectado
+        await this.checkExistingConnection();
+    }
+
+    async waitForManagers() {
+        // Aguardar AuthManager e Web3Manager
+        let attempts = 0;
+        while ((!window.AuthManager || !window.Web3Manager) && attempts < 50) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            attempts++;
+        }
+
+        if (window.AuthManager && window.Web3Manager) {
+            this.web3Manager = new window.Web3Manager();
+            this.authManager = new window.AuthManager(null, this.web3Manager);
+            console.log('✅ Managers carregados para página de autenticação');
+        } else {
+            console.error('❌ Managers não disponíveis');
+        }
+    }
+
+    // Conectar carteira (delega para AuthManager)
     async connectWallet() {
         try {
-            if (!window.ethereum) {
-                throw new Error('MetaMask não está instalado. Por favor, instale o MetaMask primeiro.');
+            if (!this.authManager) {
+                throw new Error('AuthManager não disponível');
             }
 
-            // Solicitar conexão
-            const accounts = await ethereum.request({
-                method: 'eth_requestAccounts'
-            });
+            this.showStep('loading');
 
-            if (accounts.length === 0) {
-                throw new Error('Nenhuma conta conectada');
+            const result = await this.authManager.connect();
+            
+            if (result.success) {
+                this.currentAddress = result.account;
+                await this.authenticateUser();
+            } else {
+                throw new Error(result.error || 'Falha na conexão');
             }
-
-            this.currentAddress = accounts[0];
-            console.log('🔗 Carteira conectada:', this.currentAddress);
-
-            // Verificar tipo de usuário
-            await this.authenticateUser();
 
         } catch (error) {
             console.error('Erro ao conectar:', error);
             this.showError('metamask-error', error.message);
+            this.showStep('step-metamask');
         }
     }
 
-    // Autenticar usuário via assinatura
+    // Autenticar usuário via API
     async authenticateUser() {
         try {
-            this.showStep('loading');
+            if (!this.currentAddress) {
+                this.currentAddress = await window.CoreUtils.getCurrentAccount();
+            }
 
-            // Gerar mensagem única
+            // Gerar mensagem única para assinatura
             const timestamp = Date.now();
             const message = `XCafe Auth - ${timestamp}`;
 
-            // Solicitar assinatura
-            const signature = await ethereum.request({
+            // Solicitar assinatura via MetaMask
+            const signature = await window.ethereum.request({
                 method: 'personal_sign',
                 params: [message, this.currentAddress]
             });
@@ -93,23 +124,25 @@ class Web3Auth {
 
     // Mostrar interface baseada no tipo de usuário
     showUserInterface(authResult) {
+        const address = window.CoreUtils ? window.CoreUtils.formatAddress(this.currentAddress) : this.currentAddress;
+        
         switch (authResult.userType) {
             case 'first_admin':
-                document.getElementById('first-admin-address').textContent = this.currentAddress;
+                document.getElementById('first-admin-address').textContent = address;
                 this.showStep('step-first-admin');
                 break;
 
             case 'Super Admin':
             case 'Admin':
             case 'Moderator':
-                document.getElementById('admin-address').textContent = this.currentAddress;
+                document.getElementById('admin-address').textContent = address;
                 document.getElementById('admin-type').textContent = authResult.userType;
                 document.getElementById('admin-type').className = `user-type-badge ${authResult.userType.toLowerCase().replace(' ', '-')}`;
                 this.showStep('step-admin');
                 break;
 
             case 'normal':
-                document.getElementById('user-address').textContent = this.currentAddress;
+                document.getElementById('user-address').textContent = address;
                 this.showStep('step-user');
                 break;
 
@@ -138,11 +171,9 @@ class Web3Auth {
             const result = await response.json();
 
             if (result.success) {
-                // Atualizar tipo de usuário
                 this.userType = 'Super Admin';
                 localStorage.setItem('userType', this.userType);
 
-                // Mostrar painel admin
                 setTimeout(() => {
                     this.enterAdmin();
                 }, 1000);
@@ -157,17 +188,38 @@ class Web3Auth {
         }
     }
 
-    // Entrar no painel admin
+    // Verificar conexão existente
+    async checkExistingConnection() {
+        if (this.authManager && this.authManager.isAuthenticated) {
+            console.log('✅ Já autenticado, redirecionando...');
+            this.enterApp();
+            return;
+        }
+
+        if (window.ethereum) {
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length > 0) {
+                    console.log('✅ Carteira já conectada, fazendo auto-login...');
+                    this.currentAddress = accounts[0];
+                    await this.authenticateUser();
+                }
+            } catch (error) {
+                console.log('Não foi possível fazer auto-login:', error.message);
+            }
+        }
+    }
+
+    // Navegação
     enterAdmin() {
         window.location.href = '/admin-panel.html';
     }
 
-    // Entrar na aplicação normal
     enterApp() {
         window.location.href = '/';
     }
 
-    // Mostrar etapa específica
+    // UI Helpers
     showStep(stepId) {
         document.querySelectorAll('.auth-step').forEach(step => {
             step.classList.add('hidden');
@@ -175,65 +227,64 @@ class Web3Auth {
         document.getElementById(stepId).classList.remove('hidden');
     }
 
-    // Mostrar erro
     showError(elementId, message) {
         const errorElement = document.getElementById(elementId);
-        errorElement.textContent = message;
-        errorElement.style.display = 'block';
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
     }
 }
 
-// Instância global
-const auth = new Web3Auth();
+// ========================================================================
+// INSTÂNCIA GLOBAL E FUNÇÕES DE COMPATIBILIDADE
+// ========================================================================
 
-// Funções globais para os botões
+// Instância global
+let authPageController = null;
+
+// Inicialização
+window.addEventListener('load', async () => {
+    authPageController = new AuthPageController();
+});
+
+// Funções globais para os botões (compatibilidade)
 async function connectWallet() {
-    await auth.connectWallet();
+    if (authPageController) {
+        await authPageController.connectWallet();
+    }
 }
 
 async function setupFirstAdmin() {
-    await auth.setupFirstAdmin();
+    if (authPageController) {
+        await authPageController.setupFirstAdmin();
+    }
 }
 
 function enterAdmin() {
-    auth.enterAdmin();
+    if (authPageController) {
+        authPageController.enterAdmin();
+    }
 }
 
 function enterApp() {
-    auth.enterApp();
-}
-
-// Verificar se já está conectado ao carregar
-window.addEventListener('load', async () => {
-    console.log('🚀 Sistema de autenticação Web3 carregado');
-    
-    // Verificar se MetaMask já está conectado
-    if (window.ethereum) {
-        try {
-            const accounts = await ethereum.request({ method: 'eth_accounts' });
-            if (accounts.length > 0) {
-                console.log('✅ Carteira já conectada, fazendo auto-login...');
-                auth.currentAddress = accounts[0];
-                await auth.authenticateUser();
-            }
-        } catch (error) {
-            console.log('Não foi possível fazer auto-login:', error.message);
-        }
+    if (authPageController) {
+        authPageController.enterApp();
     }
-});
+}
 
 // Detectar mudança de conta no MetaMask
 if (window.ethereum) {
-    ethereum.on('accountsChanged', (accounts) => {
+    window.ethereum.on('accountsChanged', (accounts) => {
         if (accounts.length === 0) {
-            // Desconectado
             localStorage.clear();
             location.reload();
-        } else if (accounts[0] !== auth.currentAddress) {
-            // Conta mudou
+        } else if (authPageController && accounts[0] !== authPageController.currentAddress) {
             console.log('🔄 Conta alterada, recarregando...');
             localStorage.clear();
             location.reload();
         }
     });
 }
+
+console.log('🔐 Página de autenticação otimizada carregada!');

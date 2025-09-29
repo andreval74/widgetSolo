@@ -65,7 +65,7 @@ class XCafeApp {
         }
     }
 
-    async function initializeXCafeApp() {
+    async initializeManagers() {
         try {
             // 1. DataManager (sem dependências)
             if (window.DataManager) {
@@ -251,7 +251,7 @@ class XCafeApp {
         const connectButton = document.getElementById('connect-wallet-btn');
         if (connectButton) {
             if (isAuthenticated) {
-                connectButton.textContent = this.formatAddress(account);
+                connectButton.textContent = window.CoreUtils ? window.CoreUtils.formatAddress(account) : this.formatAddress(account);
                 connectButton.classList.remove('btn-danger');
                 connectButton.classList.add('btn-success');
             } else {
@@ -285,8 +285,8 @@ class XCafeApp {
     }
 
     formatAddress(address, length = 6) {
-        if (!address || address.length < 10) return address;
-        return `${address.slice(0, length)}...${address.slice(-4)}`;
+        return window.CoreUtils ? window.CoreUtils.formatAddress(address, length) : 
+               (address ? `${address.slice(0, length)}...${address.slice(-4)}` : address);
     }
 
     notifyInitializationComplete() {

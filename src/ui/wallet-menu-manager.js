@@ -128,12 +128,17 @@ class WalletMenuManager {
     // ================================================================================
 
     getShortAddress(address) {
-        // DELEGAÇÃO: Usar web3Manager se disponível
-        if (window.web3Manager && window.web3Manager.getShortAddress) {
-            return window.web3Manager.getShortAddress(address);
+        // Usar CoreUtils se disponível
+        if (window.CoreUtils) {
+            return window.CoreUtils.formatAddress(address);
         }
         
-        // Fallback simples (caso web3Manager não esteja disponível)
+        // DELEGAÇÃO: Usar web3Manager se disponível
+        if (window.web3Manager && window.web3Manager.formatAddress) {
+            return window.web3Manager.formatAddress(address);
+        }
+        
+        // Fallback simples (caso nem CoreUtils nem web3Manager estejam disponíveis)
         if (!address) return 'Não conectado';
         return `${address.slice(0, 6)}...${address.slice(-4)}`;
     }

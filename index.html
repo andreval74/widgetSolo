@@ -25,11 +25,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
 
-    <!-- CSS UNIFICADO - Substitui main.css + menu.css + dashboard.css + auth.css + admin.css -->
-    <link href="css/styles.css" rel="stylesheet">
-
-    <!-- CSS específico do Widget (apenas se necessário) -->
-    <link href="css/widget-sale.css" rel="stylesheet">
+    <!-- CSS CONSOLIDADO - Sistema unificado -->
+    <link href="css/unified-styles.css" rel="stylesheet">
 </head>
 
 <body>
@@ -567,34 +564,32 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- Scripts -->
+    <!-- Scripts Consolidados -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- 1. Configurações Centralizadas -->
-    <script src="js/config/blockchain-config.js"></script>
+    <!-- 1. Configurações e Utilitários Centralizados -->
+    <script src="src/config/blockchain-config.js"></script>
+    <script src="src/utils/core-utils.js"></script>
 
-    <!-- 2. Wallet Manager Centralizado -->
-    <script src="js/shared/wallet.js"></script>
+    <!-- 2. Managers Core -->
+    <script src="src/core/data/data-manager.js"></script>
+    <script src="src/core/web3/web3-manager.js"></script>
+    <script src="src/core/auth/auth-manager.js"></script>
+    <script src="src/core/web3/contract-manager.js"></script>
 
-    <!-- 3. Módulos Core Otimizados -->
-    <script src="js/modules/data-manager.js"></script>
-    <script src="js/modules/auth-manager-optimized.js"></script>
-    <script src="js/modules/header-controller.js"></script>
-    <script src="js/modules/widget-sale.js"></script>
+    <!-- 3. UI Manager Consolidado -->
+    <script src="src/ui/ui-manager.js"></script>
 
-    <!-- 4. Utilitários Compartilhados Otimizados -->
-    <script src="js/shared/template-loader-optimized.js"></script>
-    <script src="js/shared/back-to-top.js"></script>
-    <script src="js/support.js"></script>
+    <!-- 4. Utilitários Adicionais -->
+    <script src="src/utils/api-utils.js"></script>
+    <script src="src/utils/blockchain-utils.js"></script>
+    <script src="src/utils/chains-utils.js"></script>
 
-    <!-- 4. Controlador de Tema Unificado -->
-    <script src="js/theme-controller-unified.js"></script>
-
-    <!-- 5. Controlador de Página Otimizado -->
-    <script src="js/pages/index-optimized.js"></script>
+    <!-- 5. Controlador de Página -->
+    <script src="src/pages/index.js"></script>
 
     <!-- 6. Coordenador Principal -->
-    <script src="js/xcafe-app-optimized.js"></script>
+    <script src="src/pages/xcafe-app.js"></script>
 
 </body>
 

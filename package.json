@@ -1,0 +1,51 @@
+{
+  "name": "xcafe-widget-saas",
+  "version": "1.0.0",
+  "description": "Sistema SaaS para criação e gestão de widgets de venda de tokens Web3",
+  "main": "unified-server.js",
+  "scripts": {
+    "start": "node unified-server.js",
+    "dev": "nodemon unified-server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "echo \"Build não necessário para este projeto\"",
+    "setup": "npm install && node setup.js",
+    "clean": "rm -rf node_modules package-lock.json"
+  },
+  "keywords": [
+    "web3",
+    "blockchain",
+    "token-sale",
+    "widget",
+    "saas",
+    "ethereum",
+    "bsc",
+    "defi"
+  ],
+  "author": "XCafe Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "compression": "^1.7.4",
+    "express-rate-limit": "^6.8.1",
+    "express-validator": "^7.0.1",
+    "jsonwebtoken": "^9.0.1",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andreval74/widgetSolo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/andreval74/widgetSolo/issues"
+  },
+  "homepage": "https://github.com/andreval74/widgetSolo#readme"
+}

@@ -109,7 +109,7 @@ class Web3Manager {
                 this.chainId = parseInt(chainId, 16);
                 this.currentNetwork = this.config.getNetworkInfo(this.chainId);
                 
-                console.log(`✅ Já conectado: ${this.formatAddress(this.currentAccount)} na rede ${this.chainId}`);
+                console.log(`✅ Já conectado: ${window.CoreUtils ? window.CoreUtils.formatAddress(this.currentAccount) : this.formatAddress(this.currentAccount)} na rede ${this.chainId}`);
                 
                 // Notificar outros componentes
                 this.notifyConnectionChange(true);
@@ -139,7 +139,7 @@ class Web3Manager {
             const result = await this.connect();
             
             if (result && result.account) {
-                console.log(`✅ Conectado globalmente: ${this.formatAddress(result.account)}`);
+                console.log(`✅ Conectado globalmente: ${window.CoreUtils ? window.CoreUtils.formatAddress(result.account) : this.formatAddress(result.account)}`);
                 
                 // Redirecionar se solicitado
                 if (redirectToDashboard) {
@@ -168,7 +168,7 @@ class Web3Manager {
 
             // Verificar se já está conectado
             if (this.isConnected && this.currentAccount) {
-                console.log('✅ Já conectado:', this.formatAddress(this.currentAccount));
+                console.log('✅ Já conectado:', window.CoreUtils ? window.CoreUtils.formatAddress(this.currentAccount) : this.formatAddress(this.currentAccount));
                 return {
                     account: this.currentAccount,
                     chainId: this.chainId,
@@ -198,7 +198,7 @@ class Web3Manager {
                     this.chainId = parseInt(chainId, 16);
                     this.currentNetwork = this.config.getNetworkInfo(this.chainId);
                     
-                    console.log(`✅ Conectado com sucesso: ${this.formatAddress(this.currentAccount)}`);
+                    console.log(`✅ Conectado com sucesso: ${window.CoreUtils ? window.CoreUtils.formatAddress(this.currentAccount) : this.formatAddress(this.currentAccount)}`);
                     console.log(`🌐 Rede atual: ${this.currentNetwork?.name || this.chainId}`);
                     
                     // Notificar outros componentes
@@ -270,7 +270,7 @@ class Web3Manager {
             this.currentAccount = accounts[0];
             this.account = accounts[0];
             this.isConnected = true;
-            console.log(`👤 Conta alterada para: ${this.formatAddress(this.currentAccount)}`);
+            console.log(`👤 Conta alterada para: ${window.CoreUtils ? window.CoreUtils.formatAddress(this.currentAccount) : this.formatAddress(this.currentAccount)}`);
             this.notifyConnectionChange(true);
         }
     }
@@ -304,8 +304,8 @@ class Web3Manager {
     // ========================================================================
 
     formatAddress(address, length = 6) {
-        if (!address || address.length < 10) return address;
-        return `${address.slice(0, length)}...${address.slice(-4)}`;
+        return window.CoreUtils ? window.CoreUtils.formatAddress(address, length) : 
+               (address ? `${address.slice(0, length)}...${address.slice(-4)}` : address);
     }
 
     showInstallMetaMask() {

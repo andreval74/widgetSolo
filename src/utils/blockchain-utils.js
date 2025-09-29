@@ -71,47 +71,19 @@ class BlockchainUtils {
     // ==================== VALIDAÇÕES ====================
     
     /**
-     * Verifica se a carteira está conectada
-     * Usa Web3Manager se disponível
+     * Verifica se a carteira está conectada (delegado para CoreUtils)
      * @returns {boolean} Status da conexão
      */
     static async isWalletConnected() {
-        try {
-            // Usar Web3Manager se disponível
-            if (window.web3Manager) {
-                return window.web3Manager.isConnected;
-            }
-            
-            // Fallback direto
-            if (!window.ethereum) return false;
-            const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-            return accounts && accounts.length > 0;
-        } catch (error) {
-            console.error('Erro ao verificar conexão da carteira:', error);
-            return false;
-        }
+        return window.CoreUtils ? await window.CoreUtils.isWalletConnected() : false;
     }
 
     /**
-     * Obtém o endereço da carteira conectada
-     * Usa Web3Manager se disponível
+     * Obtém o endereço da carteira conectada (delegado para CoreUtils)
      * @returns {string|null} Endereço da carteira ou null
      */
     static async getWalletAddress() {
-        try {
-            // Usar Web3Manager se disponível
-            if (window.web3Manager && window.web3Manager.isConnected) {
-                return window.web3Manager.account;
-            }
-            
-            // Fallback direto
-            if (!window.ethereum) return null;
-            const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-            return accounts && accounts.length > 0 ? accounts[0] : null;
-        } catch (error) {
-            console.error('Erro ao obter endereço da carteira:', error);
-            return null;
-        }
+        return window.CoreUtils ? await window.CoreUtils.getWalletAddress() : null;
     }
 
     /**
@@ -175,13 +147,13 @@ class BlockchainUtils {
     }
 
     /**
-     * Formata endereços para exibição (6 primeiros + ... + 4 últimos)
+     * Formata endereços para exibição (delegado para CoreUtils)
      * @param {string} address Endereço para formatar
      * @returns {string} Endereço formatado
      */
     static formatAddress(address) {
-        if (!address || address.length < 10) return address;
-        return `${address.slice(0, 6)}...${address.slice(-4)}`;
+        return window.CoreUtils ? window.CoreUtils.formatAddress(address) : 
+               (address && address.length >= 10 ? `${address.slice(0, 6)}...${address.slice(-4)}` : address);
     }
 
     // ==================== UTILITÁRIOS DIVERSOS ====================

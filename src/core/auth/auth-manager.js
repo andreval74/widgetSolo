@@ -114,7 +114,7 @@ class AuthManager {
                     };
                     
                     await this.dataManager.createUser(account, userData);
-                    console.log('👤 Novo usuário criado:', this.formatAddress(account));
+                    console.log('👤 Novo usuário criado:', window.CoreUtils ? window.CoreUtils.formatAddress(account) : this.formatAddress(account));
                 } else {
                     // Atualizar último login
                     existingUser.lastLogin = new Date().toISOString();
@@ -281,8 +281,8 @@ class AuthManager {
     // ========================================================================
 
     formatAddress(address, length = 6) {
-        if (!address || address.length < 10) return address;
-        return `${address.slice(0, length)}...${address.slice(-4)}`;
+        return window.CoreUtils ? window.CoreUtils.formatAddress(address, length) : 
+               (address ? `${address.slice(0, length)}...${address.slice(-4)}` : address);
     }
 
     // ========================================================================

@@ -136,13 +136,11 @@ class ContractManager {
     }
 
     /**
-     * Gera uma API Key única
+     * Gera uma API Key única (delegado para CoreUtils)
      */
     generateApiKey() {
-        const timestamp = Date.now().toString(36);
-        const random = Math.random().toString(36).substr(2, 9);
-        const prefix = 'xcafe';
-        return `${prefix}_${timestamp}_${random}`;
+        return window.CoreUtils ? window.CoreUtils.generateApiKey('xcafe') : 
+               `xcafe_${Date.now().toString(36)}_${Math.random().toString(36).substr(2, 9)}`;
     }
 
     /**

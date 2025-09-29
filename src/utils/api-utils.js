@@ -357,8 +357,8 @@ class APIManager {
     }
 
     formatAddress(address) {
-        if (!address) return '';
-        return `${address.slice(0, 6)}...${address.slice(-4)}`;
+        return window.CoreUtils ? window.CoreUtils.formatAddress(address) : 
+               (address ? `${address.slice(0, 6)}...${address.slice(-4)}` : '');
     }
 
     // ============================================================================
@@ -366,23 +366,28 @@ class APIManager {
     // ============================================================================
 
     validateEmail(email) {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return regex.test(email);
+        return window.CoreUtils ? window.CoreUtils.validateEmail(email) : 
+               /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
     validateWalletAddress(address) {
-        return /^0x[a-fA-F0-9]{40}$/.test(address);
+        return window.CoreUtils ? window.CoreUtils.validateWalletAddress(address) : 
+               /^0x[a-fA-F0-9]{40}$/.test(address);
     }
 
     validateRequired(fields) {
-        const errors = [];
+        if (window.CoreUtils) {
+            const result = window.CoreUtils.validateRequired(fields);
+            return result.errors; // APIManager retorna apenas array de erros
+        }
         
+        // Fallback
+        const errors = [];
         for (const [key, value] of Object.entries(fields)) {
             if (!value || value.toString().trim() === '') {
                 errors.push(`${key} é obrigatório`);
             }
         }
-        
         return errors;
     }
 }

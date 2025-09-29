@@ -1,0 +1,707 @@
+/*
+================================================================================
+WIDGET SAAS - CSS CONSOLIDADO E OTIMIZADO
+================================================================================
+Sistema unificado que combina styles.css, widget-sale.css e embreve.css
+Remove duplicações, organiza por componentes e mantém compatibilidade
+Autor: XCafe Team | Data: Setembro 2025
+================================================================================
+*/
+
+/* ===== IMPORTAÇÕES ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ===== VARIÁVEIS GLOBAIS ===== */
+:root {
+    /* Fonte principal */
+    --bs-font-sans-serif: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    
+    /* Cores Bootstrap personalizadas */
+    --bs-primary: #007bff;
+    --bs-primary-rgb: 0, 123, 255;
+    --bs-secondary: #6c757d;
+    --bs-secondary-rgb: 108, 117, 125;
+    --bs-success: #28a745;
+    --bs-success-rgb: 40, 167, 69;
+    --bs-info: #17a2b8;
+    --bs-info-rgb: 23, 162, 184;
+    --bs-warning: #ffc107;
+    --bs-warning-rgb: 255, 193, 7;
+    --bs-danger: #dc3545;
+    --bs-danger-rgb: 220, 53, 69;
+    --bs-light: #f8f9fa;
+    --bs-light-rgb: 248, 249, 250;
+    --bs-dark: #212529;
+    --bs-dark-rgb: 33, 37, 41;
+    
+    /* Cores específicas do projeto */
+    --neon-mustard: #ffc107;
+    --neon-mustard-bright: #ffcd39;
+    --neon-blue: #4facfe;
+    --primary-dark: #0056b3;
+    --primary-light: #66b3ff;
+    --secondary-color: #1a1a2e;
+    --accent-color: #ffffff;
+    --dark-color: #000000;
+    --light-color: #ffffff;
+    --gray-light: #e3f2fd;
+    --text-light: #b0bec5;
+    
+    /* Efeitos e sombras */
+    --neon-glow-light: 0 0 15px rgba(255, 193, 7, 0.4);
+    --neon-glow: 0 0 25px rgba(255, 193, 7, 0.6);
+    --neon-glow-strong: 0 0 35px rgba(255, 193, 7, 0.8);
+    --text-neon: 0 0 20px rgba(255, 193, 7, 0.9);
+    --shadow: 0 10px 30px rgba(0, 123, 255, 0.3);
+    --shadow-lg: 0 20px 60px rgba(0, 123, 255, 0.4);
+    
+    /* Gradientes unificados */
+    --gradient-primary: linear-gradient(135deg, var(--bs-primary) 0%, #0056b3 100%);
+    --gradient-warning: linear-gradient(135deg, var(--bs-warning) 0%, #e0a800 100%);
+    --gradient-success: linear-gradient(135deg, var(--bs-success) 0%, #218838 100%);
+    --gradient-dark: linear-gradient(135deg, var(--dark-color) 0%, var(--secondary-color) 50%, var(--primary-dark) 100%);
+    
+    /* Transições padronizadas */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Dimensões */
+    --border-radius: 12px;
+    --border-radius-sm: 8px;
+    --border-radius-lg: 16px;
+}
+
+/* ===== TEMA ESCURO ===== */
+[data-bs-theme="dark"] {
+    --bs-body-bg: #0a0f1c;
+    --bs-body-color: #e2e8f0;
+    --bs-secondary-bg: #1e293b;
+    --bs-tertiary-bg: #334155;
+    --bs-border-color: #334155;
+}
+
+/* ===== RESET E BASE ===== */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: var(--bs-font-sans-serif);
+    line-height: 1.6;
+    overflow-x: hidden;
+    transition: var(--transition-normal);
+}
+
+/* ===== COMPONENTES GLOBAIS ===== */
+
+/* Botões padronizados */
+.btn {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    border: none;
+    box-shadow: var(--shadow);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Cards padronizados */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: var(--transition-normal);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* ================================================================================
+   ESTILOS ESPECÍFICOS DO WIDGET DE VENDA
+   ================================================================================ */
+
+/* Container principal do widget - TEMA CLARO */
+.token-sale-widget {
+    background: #ffffff !important;
+    color: #333333 !important;
+    border: 3px solid var(--bs-primary);
+    border-radius: var(--border-radius-lg);
+    padding: 24px;
+    box-shadow: 
+        0 10px 30px rgba(0, 123, 255, 0.15),
+        0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    max-width: 400px;
+    margin: 0 auto;
+    font-family: var(--bs-font-sans-serif);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Força o background independente de outros estilos */
+.token-sale-widget,
+.token-sale-widget:hover,
+.token-sale-widget:focus,
+.token-sale-widget:active,
+.token-sale-widget:visited {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #333333 !important;
+}
+
+/* Container principal - TEMA DARK */
+.token-sale-widget.dark {
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+    border: 3px solid var(--neon-blue);
+    box-shadow: 
+        0 10px 30px rgba(79, 172, 254, 0.15),
+        0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.token-sale-widget.dark,
+.token-sale-widget.dark:hover,
+.token-sale-widget.dark:focus,
+.token-sale-widget.dark:active,
+.token-sale-widget.dark:visited {
+    background: #1a1a1a !important;
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+}
+
+/* Efeito de borda animada */
+.token-sale-widget::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 2px solid var(--bs-primary);
+    border-radius: 18px;
+    z-index: -1;
+    opacity: 0.6;
+    animation: border-pulse 3s ease infinite;
+}
+
+.token-sale-widget.dark::before {
+    border-color: var(--neon-blue);
+}
+
+/* Headers do widget */
+.token-sale-widget .widget-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.token-sale-widget.dark .widget-header {
+    border-bottom-color: #333;
+}
+
+.token-sale-widget .widget-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.token-sale-widget .widget-subtitle {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* Inputs do widget */
+.token-sale-widget .form-control {
+    border: 2px solid #e0e0e0;
+    border-radius: var(--border-radius-sm);
+    padding: 12px 15px;
+    font-size: 14px;
+    transition: var(--transition-fast);
+    background: #f8f9fa;
+}
+
+.token-sale-widget .form-control:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    background: #ffffff;
+}
+
+.token-sale-widget.dark .form-control {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #ffffff;
+}
+
+.token-sale-widget.dark .form-control:focus {
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+    background: #333;
+}
+
+/* Botões do widget */
+.token-sale-widget .btn {
+    border-radius: var(--border-radius-sm);
+    font-weight: 600;
+    padding: 12px 20px;
+    font-size: 14px;
+    transition: var(--transition-fast);
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.token-sale-widget .btn-primary {
+    background: var(--gradient-primary);
+    border: none;
+    color: white;
+}
+
+.token-sale-widget .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+.token-sale-widget .btn-success {
+    background: var(--gradient-success);
+    border: none;
+    color: white;
+}
+
+.token-sale-widget .btn-success:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}
+
+.token-sale-widget .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Progress bar do widget */
+.token-sale-widget .progress {
+    height: 8px;
+    border-radius: 20px;
+    background-color: #e0e0e0;
+    margin: 15px 0;
+}
+
+.token-sale-widget .progress-bar {
+    background: var(--gradient-primary);
+    border-radius: 20px;
+    transition: width 0.6s ease;
+}
+
+.token-sale-widget.dark .progress {
+    background-color: #333;
+}
+
+/* Status e informações */
+.token-sale-widget .widget-info {
+    font-size: 12px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: var(--border-radius-sm);
+    margin: 10px 0;
+}
+
+.token-sale-widget.dark .widget-info {
+    background: #2a2a2a;
+}
+
+.token-sale-widget .price-display {
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    padding: 15px 0;
+}
+
+/* Loading states */
+.token-sale-widget .btn-loading {
+    position: relative;
+}
+
+.token-sale-widget .btn-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Versões dark dos botões */
+.token-sale-widget.dark .btn-primary {
+    background: linear-gradient(135deg, var(--neon-blue) 0%, #2980b9 100%);
+    border: none;
+    color: white;
+}
+
+.token-sale-widget.dark .btn-primary:hover {
+    box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+}
+
+.token-sale-widget.dark .btn-success {
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    border: none;
+    color: white;
+}
+
+.token-sale-widget.dark .btn-success:hover {
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+}
+
+/* ================================================================================
+   ESTILOS DA PÁGINA "EM BREVE"
+   ================================================================================ */
+
+/* Container da página em breve */
+.coming-soon-page {
+    background: var(--gradient-dark);
+    color: var(--light-color);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Partículas animadas de fundo */
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--bs-primary);
+    border-radius: 50%;
+    animation: float 6s ease-in-out infinite;
+    opacity: 0.7;
+}
+
+.particle:nth-child(2n) {
+    animation-delay: 2s;
+    background: var(--neon-mustard);
+}
+
+.particle:nth-child(3n) {
+    animation-delay: 4s;
+    background: var(--neon-blue);
+}
+
+/* Conteúdo da página em breve */
+.coming-soon-content {
+    position: relative;
+    z-index: 2;
+    padding: 2rem;
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.coming-soon-title {
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.coming-soon-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    opacity: 0.8;
+}
+
+.coming-soon-description {
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto 3rem;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+/* ================================================================================
+   ANIMAÇÕES
+   ================================================================================ */
+
+/* Animação de pulso da borda */
+@keyframes border-pulse {
+    0%, 100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.02);
+    }
+}
+
+/* Animação de rotação */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Animação de flutuação das partículas */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.7;
+    }
+    50% {
+        transform: translateY(-20px) rotate(180deg);
+        opacity: 1;
+    }
+}
+
+/* Animação de entrada suave */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animação de zoom */
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ================================================================================
+   RESPONSIVIDADE
+   ================================================================================ */
+
+/* Tablets */
+@media (max-width: 992px) {
+    .token-sale-widget {
+        max-width: 350px;
+        padding: 20px;
+    }
+    
+    .coming-soon-title {
+        font-size: 3rem;
+    }
+    
+    .coming-soon-subtitle {
+        font-size: 1.3rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .token-sale-widget {
+        max-width: 100%;
+        margin: 0 10px;
+        padding: 15px;
+    }
+    
+    .token-sale-widget .widget-title {
+        font-size: 16px;
+    }
+    
+    .token-sale-widget .btn {
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+    
+    .coming-soon-title {
+        font-size: 2.5rem;
+    }
+    
+    .coming-soon-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .coming-soon-description {
+        font-size: 1rem;
+    }
+}
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+    .token-sale-widget {
+        border-width: 2px;
+        padding: 12px;
+    }
+    
+    .coming-soon-title {
+        font-size: 2rem;
+    }
+    
+    .coming-soon-content {
+        padding: 1rem;
+    }
+}
+
+/* ================================================================================
+   UTILITÁRIOS E HELPERS
+   ================================================================================ */
+
+/* Classes de animação */
+.fade-in-up {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.zoom-in {
+    animation: zoomIn 0.5s ease forwards;
+}
+
+/* Classes de texto */
+.text-gradient-primary {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.text-neon {
+    text-shadow: var(--text-neon);
+}
+
+/* Classes de sombra */
+.shadow-neon {
+    box-shadow: var(--neon-glow);
+}
+
+.shadow-neon-strong {
+    box-shadow: var(--neon-glow-strong);
+}
+
+/* Bordas arredondadas */
+.rounded-custom {
+    border-radius: var(--border-radius) !important;
+}
+
+.rounded-custom-lg {
+    border-radius: var(--border-radius-lg) !important;
+}
+
+/* Classes de transição */
+.transition-fast {
+    transition: var(--transition-fast);
+}
+
+.transition-normal {
+    transition: var(--transition-normal);
+}
+
+.transition-slow {
+    transition: var(--transition-slow);
+}
+
+.transition-smooth {
+    transition: var(--transition-smooth);
+}
+
+/* ================================================================================
+   PRINT STYLES
+   ================================================================================ */
+
+@media print {
+    .token-sale-widget {
+        box-shadow: none !important;
+        border: 1px solid #000 !important;
+    }
+    
+    .particles,
+    .coming-soon-page {
+        display: none !important;
+    }
+}
+
+/* ================================================================================
+   HIGH CONTRAST MODE
+   ================================================================================ */
+
+@media (prefers-contrast: high) {
+    .token-sale-widget {
+        border-width: 4px;
+    }
+    
+    .token-sale-widget .btn {
+        border: 2px solid currentColor;
+    }
+}
+
+/* ================================================================================
+   REDUCED MOTION
+   ================================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .particles {
+        display: none;
+    }
+}
