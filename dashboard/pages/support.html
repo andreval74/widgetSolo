@@ -1,0 +1,400 @@
+<!-- Suporte & Ajuda Page -->
+<div class="support-section">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Suporte & Ajuda</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#contact-modal">
+            <i class="fas fa-envelope"></i> Entrar em Contato
+        </button>
+    </div>
+
+    <!-- Navegação por Abas -->
+    <ul class="nav nav-tabs mb-4" id="support-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="getting-started-tab" data-bs-toggle="tab" data-bs-target="#getting-started" type="button" role="tab">
+                <i class="fas fa-rocket"></i> Primeiros Passos
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="faq-tab" data-bs-toggle="tab" data-bs-target="#faq" type="button" role="tab">
+                <i class="fas fa-question-circle"></i> FAQ
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="integration-tab" data-bs-toggle="tab" data-bs-target="#integration" type="button" role="tab">
+                <i class="fas fa-code"></i> Integração
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="troubleshooting-tab" data-bs-toggle="tab" data-bs-target="#troubleshooting" type="button" role="tab">
+                <i class="fas fa-tools"></i> Solução de Problemas
+            </button>
+        </li>
+    </ul>
+
+    <!-- Conteúdo das Abas -->
+    <div class="tab-content" id="support-content">
+        <!-- Primeiros Passos Tab -->
+        <div class="tab-pane fade show active" id="getting-started" role="tabpanel">
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-play-circle me-2"></i>Começar Agora
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group list-group-flush">
+                                <button class="list-group-item list-group-item-action" onclick="navigateToSection('new-contract')">
+                                    <i class="fas fa-plus-circle text-primary me-3"></i>
+                                    <div>
+                                        <h6 class="mb-1">Cadastrar primeiro contrato</h6>
+                                        <small class="text-muted">Configure seu primeiro widget de vendas</small>
+                                    </div>
+                                </button>
+                                <button class="list-group-item list-group-item-action" onclick="showIntegrationTab()">
+                                    <i class="fas fa-code text-success me-3"></i>
+                                    <div>
+                                        <h6 class="mb-1">Como integrar o widget</h6>
+                                        <small class="text-muted">Aprenda a adicionar o widget ao seu site</small>
+                                    </div>
+                                </button>
+                                <button class="list-group-item list-group-item-action" onclick="navigateToSection('buy-credits')">
+                                    <i class="fas fa-coins text-warning me-3"></i>
+                                    <div>
+                                        <h6 class="mb-1">Comprar créditos</h6>
+                                        <small class="text-muted">Adquira créditos para usar os widgets</small>
+                                    </div>
+                                </button>
+                                <button class="list-group-item list-group-item-action" onclick="navigateToSection('settings')">
+                                    <i class="fas fa-cog text-info me-3"></i>
+                                    <div>
+                                        <h6 class="mb-1">Configurações</h6>
+                                        <small class="text-muted">Personalize sua conta e preferências</small>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-lightbulb me-2"></i>Dicas Importantes
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Primeira vez?</strong> Recomendamos começar criando um contrato de teste.
+                            </div>
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Lembre-se:</strong> Você precisa ter créditos suficientes para ativar seus widgets.
+                            </div>
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <strong>Dica:</strong> Use o modo preview para testar antes de publicar.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Tab -->
+        <div class="tab-pane fade" id="faq" role="tabpanel">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="accordion" id="faq-accordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    Como integrar o widget na minha página?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faq-accordion">
+                                <div class="accordion-body">
+                                    <p>Para integrar o widget em sua página, siga estes passos:</p>
+                                    <ol>
+                                        <li>Crie um contrato no dashboard</li>
+                                        <li>Copie o código fornecido</li>
+                                        <li>Cole no HTML da sua página</li>
+                                        <li>Configure as opções desejadas</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    Como funciona o sistema de créditos?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faq-accordion">
+                                <div class="accordion-body">
+                                    <p>O sistema de créditos funciona da seguinte forma:</p>
+                                    <ul>
+                                        <li>1 crédito = 1 visualização do widget</li>
+                                        <li>Créditos são descontados quando alguém visualiza seu widget</li>
+                                        <li>Você pode comprar créditos a qualquer momento</li>
+                                        <li>Sem créditos, o widget fica inativo</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">Links Rápidos</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary btn-sm" onclick="navigateToSection('new-contract')">
+                                    <i class="fas fa-plus"></i> Criar Contrato
+                                </button>
+                                <button class="btn btn-outline-success btn-sm" onclick="showIntegrationTab()">
+                                    <i class="fas fa-code"></i> Ver Código
+                                </button>
+                                <button class="btn btn-outline-warning btn-sm" onclick="navigateToSection('buy-credits')">
+                                    <i class="fas fa-coins"></i> Comprar Créditos
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Tab -->
+        <div class="tab-pane fade" id="integration" role="tabpanel">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>Integração do Widget</h4>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">Código de Integração</h6>
+                        </div>
+                        <div class="card-body">
+                            <p>Adicione este código no final da tag <code>&lt;body&gt;</code> da sua página:</p>
+                            <pre class="bg-light p-3 rounded"><code id="integration-code">&lt;script src="https://widget.widgetsaas.app/widget.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  WidgetSaaS.init({
+    contractId: 'seu-contract-id',
+    position: 'bottom-right'
+  });
+&lt;/script&gt;</code></pre>
+                            <button class="btn btn-primary mt-2" onclick="copyCode()">
+                                <i class="fas fa-copy"></i> Copiar Código
+                            </button>
+                            <div id="copy-success" class="alert alert-success mt-2" style="display: none;">
+                                <i class="fas fa-check-circle"></i> Código copiado com sucesso!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Troubleshooting Tab -->
+        <div class="tab-pane fade" id="troubleshooting" role="tabpanel">
+            <h4>Solução de Problemas</h4>
+            
+            <div class="accordion" id="troubleshooting-accordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#trouble1">
+                            Widget não está aparecendo na página
+                        </button>
+                    </h2>
+                    <div id="trouble1" class="accordion-collapse collapse show" data-bs-parent="#troubleshooting-accordion">
+                        <div class="accordion-body">
+                            <h6>Possíveis causas:</h6>
+                            <ul>
+                                <li>Verificar se o código foi adicionado corretamente</li>
+                                <li>Verificar se o contractId está correto</li>
+                                <li>Verificar se há créditos suficientes</li>
+                                <li>Verificar console do navegador para erros</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#trouble2">
+                            Pagamentos não estão funcionando
+                        </button>
+                    </h2>
+                    <div id="trouble2" class="accordion-collapse collapse" data-bs-parent="#troubleshooting-accordion">
+                        <div class="accordion-body">
+                            <h6>Verificar:</h6>
+                            <ul>
+                                <li>Wallet conectada corretamente</li>
+                                <li>Saldo suficiente para transação</li>
+                                <li>Rede blockchain correta</li>
+                                <li>Contrato ativo e configurado</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Contato -->
+<div class="modal fade" id="contact-modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Entre em Contato</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="contact-form">
+                    <div class="mb-3">
+                        <label class="form-label">Nome *</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">E-mail *</label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Assunto *</label>
+                        <select class="form-select" name="subject" required>
+                            <option value="">Selecione o assunto...</option>
+                            <option value="Suporte Técnico">Suporte Técnico</option>
+                            <option value="Dúvidas sobre Cobrança">Dúvidas sobre Cobrança</option>
+                            <option value="Solicitação de Funcionalidade">Solicitação de Funcionalidade</option>
+                            <option value="Reportar Bug">Reportar Bug</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mensagem *</label>
+                        <textarea class="form-control" rows="4" name="message" required placeholder="Descreva detalhadamente sua dúvida ou problema..."></textarea>
+                    </div>
+                    <div class="alert alert-info">
+                        <small>
+                            <i class="fas fa-info-circle me-1"></i>
+                            Você também pode entrar em contato diretamente pelo e-mail: 
+                            <strong><a href="mailto:andreval74@gmail.com">andreval74@gmail.com</a></strong>
+                        </small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="submitForm()">
+                    <i class="fas fa-paper-plane"></i> Enviar Mensagem
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Função para navegar entre seções do dashboard
+function navigateToSection(section) {
+    try {
+        if (typeof window.dashboardManager !== 'undefined') {
+            window.dashboardManager.showSection(section);
+        } else if (typeof dashboardManager !== 'undefined') {
+            dashboardManager.showSection(section);
+        } else {
+            console.warn('Dashboard Manager não encontrado');
+            alert('Redirecionando para seção: ' + section);
+        }
+    } catch (error) {
+        console.error('Erro ao navegar:', error);
+    }
+}
+
+// Função para mostrar a aba de integração
+function showIntegrationTab() {
+    const tab = document.getElementById('integration-tab');
+    if (tab) {
+        tab.click();
+    }
+}
+
+// Função para copiar código
+function copyCode() {
+    const codeText = '<script src="https://widget.widgetsaas.app/widget.js"></script>\n<script>\n  WidgetSaaS.init({\n    contractId: \'seu-contract-id\',\n    position: \'bottom-right\'\n  });\n</script>';
+
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(codeText).then(function() {
+            showCopyMessage();
+        }).catch(function() {
+            fallbackCopy(codeText);
+        });
+    } else {
+        fallbackCopy(codeText);
+    }
+}
+
+// Fallback para copiar texto
+function fallbackCopy(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        showCopyMessage();
+    } catch (err) {
+        alert('Código: ' + text);
+    }
+    document.body.removeChild(textArea);
+}
+
+// Mostrar mensagem de sucesso ao copiar
+function showCopyMessage() {
+    const successDiv = document.getElementById('copy-success');
+    if (successDiv) {
+        successDiv.style.display = 'block';
+        setTimeout(function() {
+            successDiv.style.display = 'none';
+        }, 3000);
+    }
+}
+
+// Função para enviar formulário
+function submitForm() {
+    const form = document.getElementById('contact-form');
+    const formData = new FormData(form);
+    
+    if (!formData.get('name') || !formData.get('email') || !formData.get('subject') || !formData.get('message')) {
+        alert('Por favor, preencha todos os campos obrigatórios.');
+        return;
+    }
+    
+    // Simular envio
+    alert('Mensagem enviada com sucesso! Responderemos em breve no e-mail fornecido.');
+    
+    // Fechar modal
+    const modal = document.getElementById('contact-modal');
+    if (modal && typeof bootstrap !== 'undefined') {
+        const modalInstance = bootstrap.Modal.getInstance(modal);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+    }
+    
+    form.reset();
+}
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Support page loaded successfully');
+});
+</script>

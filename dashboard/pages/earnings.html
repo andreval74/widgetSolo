@@ -1,0 +1,280 @@
+<!-- Ganhos Page -->
+<div class="earnings-section">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Meus Ganhos</h2>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary" onclick="refreshEarnings()">
+                <i class="fas fa-sync-alt"></i> Atualizar
+            </button>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#withdraw-modal">
+                <i class="fas fa-money-bill-wave"></i> Sacar
+            </button>
+        </div>
+    </div>
+
+    <!-- Cards de Ganhos -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <i class="fas fa-dollar-sign fa-2x text-success mb-2"></i>
+                    <h3 id="total-earnings" class="text-success">R$ 0,00</h3>
+                    <p class="mb-0">Ganhos Totais</p>
+                    <small class="text-muted">Desde o início</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <i class="fas fa-coins fa-2x text-primary mb-2"></i>
+                    <h3 id="available-balance" class="text-primary">R$ 0,00</h3>
+                    <p class="mb-0">Saldo Disponível</p>
+                    <small class="text-muted">Para saque</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-warning">
+                <div class="card-body text-center">
+                    <i class="fas fa-hourglass-half fa-2x text-warning mb-2"></i>
+                    <h3 id="pending-earnings" class="text-warning">R$ 0,00</h3>
+                    <p class="mb-0">Pendente</p>
+                    <small class="text-muted">Em processamento</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico de Ganhos -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Evolução dos Ganhos</h5>
+                    <select class="form-select w-auto" id="earnings-period">
+                        <option value="7d">Últimos 7 dias</option>
+                        <option value="30d" selected>Últimos 30 dias</option>
+                        <option value="90d">Últimos 90 dias</option>
+                        <option value="1y">Último ano</option>
+                    </select>
+                </div>
+                <div class="card-body">
+                    <canvas id="earnings-chart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Top Widgets por Ganho -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Top Widgets</h5>
+                </div>
+                <div class="card-body">
+                    <div id="top-widgets">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <strong>Pagamento Café</strong>
+                                <br><small class="text-muted">127 transações</small>
+                            </div>
+                            <div class="text-end">
+                                <strong class="text-success">R$ 3.175,00</strong>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <strong>Doação Projeto</strong>
+                                <br><small class="text-muted">89 transações</small>
+                            </div>
+                            <div class="text-end">
+                                <strong class="text-success">R$ 2.225,00</strong>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Assinatura Premium</strong>
+                                <br><small class="text-muted">31 transações</small>
+                            </div>
+                            <div class="text-end">
+                                <strong class="text-success">R$ 3.069,00</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Histórico de Saques -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Histórico de Saques</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Valor</th>
+                            <th>Carteira Destino</th>
+                            <th>Status</th>
+                            <th>Hash</th>
+                        </tr>
+                    </thead>
+                    <tbody id="withdrawals-table">
+                        <tr>
+                            <td colspan="5" class="text-center py-4">
+                                <i class="fas fa-inbox fa-2x text-muted mb-2"></i>
+                                <p class="text-muted mb-0">Nenhum saque realizado ainda</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Saque -->
+<div class="modal fade" id="withdraw-modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Solicitar Saque</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="withdraw-form">
+                    <div class="mb-3">
+                        <label class="form-label">Valor a Sacar</label>
+                        <div class="input-group">
+                            <span class="input-group-text">R$</span>
+                            <input type="number" class="form-control" id="withdraw-amount" 
+                                   step="0.01" min="10" max="5000" required>
+                        </div>
+                        <small class="form-text text-muted">
+                            Saldo disponível: <span id="modal-available-balance">R$ 0,00</span>
+                        </small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Carteira Destino</label>
+                        <input type="text" class="form-control" id="withdraw-wallet" 
+                               placeholder="0x..." required>
+                        <small class="form-text text-muted">
+                            Endereço da carteira Ethereum para receber os fundos
+                        </small>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong>Informações importantes:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Valor mínimo: R$ 10,00</li>
+                            <li>Taxa de processamento: 2%</li>
+                            <li>Processamento: 24-48h</li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-success" onclick="processWithdraw()">
+                    <i class="fas fa-paper-plane"></i> Solicitar Saque
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadEarningsData();
+    setupEarningsChart();
+});
+
+function loadEarningsData() {
+    // Simular carregamento de dados
+    setTimeout(() => {
+        document.getElementById('total-earnings').textContent = 'R$ 8.469,00';
+        document.getElementById('available-balance').textContent = 'R$ 5.420,50';
+        document.getElementById('pending-earnings').textContent = 'R$ 3.048,50';
+        document.getElementById('modal-available-balance').textContent = 'R$ 5.420,50';
+    }, 500);
+}
+
+function setupEarningsChart() {
+    const ctx = document.getElementById('earnings-chart').getContext('2d');
+    
+    const data = {
+        labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+        datasets: [{
+            label: 'Ganhos (R$)',
+            data: [1200, 1900, 2100, 2700],
+            borderColor: '#28a745',
+            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+            borderWidth: 2,
+            fill: true
+        }]
+    };
+
+    new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'R$ ' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function refreshEarnings() {
+    loadEarningsData();
+    if (typeof window.showToast === 'function') {
+        window.showToast('Ganhos atualizados!', 'success');
+    }
+}
+
+function processWithdraw() {
+    const amount = document.getElementById('withdraw-amount').value;
+    const wallet = document.getElementById('withdraw-wallet').value;
+
+    if (!amount || !wallet) {
+        if (typeof window.showToast === 'function') {
+            window.showToast('Preencha todos os campos!', 'error');
+        }
+        return;
+    }
+
+    if (parseFloat(amount) < 10) {
+        if (typeof window.showToast === 'function') {
+            window.showToast('Valor mínimo é R$ 10,00!', 'error');
+        }
+        return;
+    }
+
+    // Simular processamento
+    const modal = bootstrap.Modal.getInstance(document.getElementById('withdraw-modal'));
+    modal.hide();
+
+    if (typeof window.showToast === 'function') {
+        window.showToast('Saque solicitado com sucesso! Processamento em 24-48h.', 'success');
+    }
+
+    // Limpar formulário
+    document.getElementById('withdraw-form').reset();
+}
+</script>

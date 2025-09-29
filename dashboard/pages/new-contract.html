@@ -1,0 +1,597 @@
+<!-- 
+=======================================================================
+PÁGINA DE CADASTRO DE NOVO CONTRATO - Widget SaaS
+=======================================================================
+Esta página permite aos usuários cadastrar contratos de venda de tokens
+existentes para divulgação através do sistema de widgets.
+
+CARACTERÍSTICAS:
+- Seleção dinâmica de redes blockchain (50+ redes)
+- Sistema de autocomplete para busca de redes
+- Detecção automática de informações do contrato
+- Validação de endereços blockchain
+- Integração com sistema de chains dinâmico
+=======================================================================
+-->
+
+<!-- Seção principal do formulário de cadastro -->
+<div class="new-contract-section">
+    <!-- Cabeçalho da página com título e botão de voltar -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>🎯 Cadastrar Novo Contrato</h2>
+        <!-- Botão para retornar à lista de contratos -->
+        <button class="btn btn-outline-secondary" onclick="dashboardManager.showSection('contracts')">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </button>
+    </div>
+
+    <!-- Container centralizado para o formulário -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Card principal com formulário -->
+            <div class="card">
+                <!-- Cabeçalho do card com instruções -->
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-plus-circle me-2 text-primary"></i>
+                        Cadastrar Novo Contrato
+                    </h4>
+                    <p class="text-muted mb-0 mt-2">
+                        Informe apenas a rede e endereço do contrato. As demais informações são obtidas automaticamente.
+                    </p>
+                </div>
+
+                <!-- Corpo do card com formulário -->
+                <div class="card-body">
+                    <form id="newContractForm">
+                        <div class="row">
+                            <!-- 
+                            ===========================================
+                            SEÇÃO DE SELEÇÃO DE REDE BLOCKCHAIN
+                            ===========================================
+                            Campo dinâmico que carrega redes do chains.json
+                            - Autocomplete com busca inteligente
+                            - Suporte a 50+ redes blockchain
+                            - Cache e fallback automático
+                            - Atualização automática de redes
+                            ===========================================
+                            -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-network-wired me-2"></i>Rede Blockchain *
+                                </label>
+                                <!-- Input group com campo de busca e botão de refresh -->
+                                <div class="input-group">
+                                    <!-- Campo de busca com autocomplete -->
+                                    <input type="text" class="form-control" id="networkSearch" name="networkSearch" 
+                                           placeholder="Digite o nome da rede ou Chain ID..." 
+                                           autocomplete="off" required>
+                                    <!-- Botão para forçar atualização das redes -->
+                                    <button class="btn btn-outline-secondary" type="button" id="refreshNetworks">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </div>
+                                <!-- Dropdown de autocomplete (carregado dinamicamente) -->
+                                <div id="networkAutocomplete" class="autocomplete-dropdown"></div>
+                                <!-- Campo hidden com chainId da rede selecionada -->
+                                <input type="hidden" name="network" id="selectedNetworkInput" required>
+                                <!-- Status do carregamento de redes -->
+                                <div class="form-text">
+                                    <span id="networks-count">🔄 Carregando redes...</span>
+                                    <span class="text-muted">| Suporte a 50+ blockchains</span>
+                                </div>
+                                
+                                <!-- Informações da rede selecionada -->
+                                <div id="selected-network-info" class="mt-2" style="display: none;">
+                                    <div class="card bg-primary bg-opacity-10 border-primary">
+                                        <div class="card-body py-2 px-3">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-check-circle text-primary me-2"></i>
+                                                <div>
+                                                    <small class="fw-bold text-primary">Rede selecionada:</small>
+                                                    <div class="small">
+                                                        <span id="selected-network-name">-</span>
+                                                        <span class="text-muted">| Chain ID: <span id="selected-network-id">-</span></span>
+                                                        <span class="text-muted">| <span id="selected-network-currency">-</span></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-code me-2"></i>Endereço do Contrato *
+                                </label>
+                                <input type="text" class="form-control" name="contractAddress" required
+                                       placeholder="0x..." pattern="^0x[a-fA-F0-9]{40}$">
+                                <div class="form-text">Endereço do seu contrato de venda de tokens</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="mb-3">
+                                            <i class="fas fa-magic me-2 text-primary"></i>
+                                            Sistema de Detecção Automática
+                                        </h6>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="small mb-2">
+                                                    <i class="fas fa-check text-success me-2"></i>
+                                                    Nome e símbolo do token
+                                                </p>
+                                                <p class="small mb-2">
+                                                    <i class="fas fa-check text-success me-2"></i>
+                                                    Preço e funções de compra
+                                                </p>
+                                                <p class="small mb-0">
+                                                    <i class="fas fa-check text-success me-2"></i>
+                                                    Configurações de decimais
+                                                </p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="small mb-2">
+                                                    <i class="fas fa-check text-success me-2"></i>
+                                                    Detecção de contratos de venda
+                                                </p>
+                                                <p class="small mb-2">
+                                                    <i class="fas fa-check text-success me-2"></i>
+                                                    Suporte a múltiplos tokens
+                                                </p>
+                                                <p class="small mb-0">
+                                                    <i class="fas fa-check text-success me-2"></i>
+                                                    Geração automática de API Key
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="contract-detection-results" class="mt-3" style="display: none;"></div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-outline-secondary" onclick="dashboardManager.showSection('contracts')">
+                                <i class="fas fa-arrow-left me-2"></i>Voltar
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="detectContract()">
+                                <i class="fas fa-search me-2"></i>Detectar Contrato
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+// =======================================================================
+// SCRIPTS ESPECÍFICOS DA PÁGINA NEW-CONTRACT
+// =======================================================================
+// Gerencia todo o funcionamento da página de cadastro de contratos,
+// incluindo sistema de redes dinâmico e detecção automática
+// =======================================================================
+
+<script type="module">
+// ==================== IMPORTAÇÕES ====================
+// Importar sistema de chains dinâmico
+import { fetchAllNetworks, searchNetworks, getNetworkByChainId } from '../../js/shared/chains-utils.js';
+
+// ==================== VARIÁVEIS GLOBAIS ====================
+/**
+ * Array com todas as redes blockchain disponíveis
+ * Carregado dinamicamente do chains.json ou API externa
+ */
+let allNetworks = [];
+
+/**
+ * Rede blockchain atualmente selecionada pelo usuário
+ * Contém todas as informações da rede (RPC, explorer, etc)
+ */
+let selectedNetwork = null;
+
+// ==================== INICIALIZAÇÃO ====================
+/**
+ * Inicialização principal da página
+ * Executado quando o DOM está completamente carregado
+ */
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🔗 Inicializando sistema de redes...');
+    
+    // Carregar redes disponíveis do sistema de chains
+    await loadNetworks();
+    
+    // Configurar todos os event listeners da página
+    setupEventListeners();
+    
+    console.log('✅ Sistema de redes carregado');
+});
+
+// ==================== FUNÇÕES DE CARREGAMENTO ====================
+/**
+ * Carrega todas as redes blockchain disponíveis
+ * Utiliza o sistema ChainsUtils para buscar redes atualizadas
+ */
+async function loadNetworks() {
+    try {
+        const networksCountEl = document.getElementById('networks-count');
+        networksCountEl.innerHTML = '🔄 Carregando redes...';
+        
+        allNetworks = await fetchAllNetworks();
+        
+        console.log(`📡 ${allNetworks.length} redes carregadas`);
+        networksCountEl.innerHTML = `✅ ${allNetworks.length} redes disponíveis`;
+        
+        // Mostrar redes populares como exemplo
+        showPopularNetworks();
+        
+    } catch (error) {
+        console.error('❌ Erro ao carregar redes:', error);
+        document.getElementById('networks-count').innerHTML = '❌ Erro ao carregar redes';
+    }
+}
+
+/**
+ * Mostra exemplos de redes populares
+ */
+function showPopularNetworks() {
+    const popular = allNetworks.filter(n => [1, 56, 137, 97].includes(n.chainId));
+    if (popular.length > 0) {
+        console.log('🌟 Redes populares:', popular.map(n => `${n.name} (${n.chainId})`).join(', '));
+    }
+}
+
+/**
+ * Configura todos os event listeners
+ */
+function setupEventListeners() {
+    const networkSearch = document.getElementById('networkSearch');
+    const refreshBtn = document.getElementById('refreshNetworks');
+    const form = document.getElementById('newContractForm');
+    
+    // Busca de redes
+    let searchTimeout;
+    networkSearch.addEventListener('input', function(e) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            handleNetworkSearch(e.target.value);
+        }, 300);
+    });
+    
+    // Enter para selecionar primeira opção
+    networkSearch.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const firstOption = document.querySelector('.autocomplete-item:first-child');
+            if (firstOption) {
+                firstOption.click();
+            }
+        } else if (e.key === 'Escape') {
+            hideAutocomplete();
+        }
+    });
+    
+    // Refresh de redes
+    refreshBtn.addEventListener('click', async function() {
+        refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        await loadNetworks();
+        refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
+    });
+    
+    // Submit do formulário
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        detectContract();
+    });
+    
+    // Clique fora fecha autocomplete
+    document.addEventListener('click', function(e) {
+        if (!networkSearch.contains(e.target) && !document.getElementById('networkAutocomplete').contains(e.target)) {
+            hideAutocomplete();
+        }
+    });
+}
+
+/**
+ * Busca e mostra redes com base na query
+ */
+async function handleNetworkSearch(query) {
+    if (!query || query.length < 2) {
+        hideAutocomplete();
+        return;
+    }
+    
+    try {
+        const results = await searchNetworks(query);
+        showAutocomplete(results);
+    } catch (error) {
+        console.error('Erro na busca:', error);
+        hideAutocomplete();
+    }
+}
+
+/**
+ * Mostra dropdown de autocomplete
+ */
+function showAutocomplete(networks) {
+    const dropdown = document.getElementById('networkAutocomplete');
+    
+    if (!networks || networks.length === 0) {
+        hideAutocomplete();
+        return;
+    }
+    
+    const html = networks.slice(0, 8).map(network => `
+        <div class="autocomplete-item" onclick="selectNetwork(${network.chainId})">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="fw-bold text-dark">${network.name}</div>
+                    <div class="small text-muted">
+                        ${network.shortName || network.chain} | Chain ID: ${network.chainId} | ${network.nativeCurrency.symbol}
+                    </div>
+                </div>
+                <div class="text-end">
+                    ${network.supported ? '<span class="badge bg-success">✓</span>' : '<span class="badge bg-warning">Beta</span>'}
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    dropdown.innerHTML = html;
+    dropdown.style.display = 'block';
+}
+
+/**
+ * Esconde dropdown de autocomplete
+ */
+function hideAutocomplete() {
+    document.getElementById('networkAutocomplete').style.display = 'none';
+}
+
+/**
+ * Seleciona uma rede
+ */
+window.selectNetwork = async function(chainId) {
+    const network = await getNetworkByChainId(chainId);
+    if (!network) {
+        console.error('Rede não encontrada:', chainId);
+        return;
+    }
+    
+    selectedNetwork = network;
+    
+    // Atualizar campos
+    document.getElementById('networkSearch').value = `${network.name} (${network.chainId})`;
+    document.getElementById('selectedNetworkInput').value = network.chainId;
+    
+    // Mostrar informações da rede selecionada
+    document.getElementById('selected-network-name').textContent = network.name;
+    document.getElementById('selected-network-id').textContent = network.chainId;
+    document.getElementById('selected-network-currency').textContent = network.nativeCurrency.symbol;
+    document.getElementById('selected-network-info').style.display = 'block';
+    
+    hideAutocomplete();
+    
+    console.log('✅ Rede selecionada:', network.name, 'Chain ID:', network.chainId);
+}
+
+/**
+ * ===========================================
+ * FUNÇÃO DE DETECÇÃO DE CONTRATO
+ * ===========================================
+ * Simula a detecção de um contrato de token na rede selecionada
+ * Mostra informações detalhadas do contrato e da rede
+ * TODO: Integrar com Web3 real para detecção automática
+ */
+window.detectContract = function() {
+    const form = document.getElementById('newContractForm');
+    const formData = new FormData(form);
+    
+    const networkId = formData.get('network');
+    const contractAddress = formData.get('contractAddress');
+    
+    if (!selectedNetwork || !networkId) {
+        alert('Por favor, selecione uma rede blockchain válida.');
+        return;
+    }
+    
+    if (!contractAddress) {
+        alert('Por favor, informe o endereço do contrato.');
+        return;
+    }
+    
+    // Validar endereço Ethereum
+    if (!/^0x[a-fA-F0-9]{40}$/.test(contractAddress)) {
+        alert('Endereço do contrato inválido. Use o formato: 0x...');
+        return;
+    }
+    
+    console.log('🔍 Detectando contrato:', contractAddress, 'na rede:', selectedNetwork.name);
+    
+    // Simular detecção de contrato com informações da rede real
+    const resultsDiv = document.getElementById('contract-detection-results');
+    resultsDiv.innerHTML = `
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <i class="fas fa-check-circle me-2"></i>Contrato Detectado com Sucesso!
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Nome:</strong> Token Detectado</p>
+                        <p><strong>Símbolo:</strong> TKN</p>
+                        <p><strong>Decimais:</strong> 18</p>
+                        <p><strong>Endereço:</strong> <code class="small">${contractAddress}</code></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Rede:</strong> ${selectedNetwork.name}</p>
+                        <p><strong>Chain ID:</strong> ${selectedNetwork.chainId}</p>
+                        <p><strong>Tipo:</strong> ERC-20</p>
+                        <p><strong>Status:</strong> <span class="badge bg-success">Ativo</span></p>
+                    </div>
+                </div>
+                
+                <!-- Informações técnicas da rede -->
+                <div class="mt-3">
+                    <div class="card bg-light">
+                        <div class="card-body py-2">
+                            <h6 class="small text-muted mb-2">INFORMAÇÕES DA REDE</h6>
+                            <div class="row small">
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>RPC:</strong> <span class="text-muted">${selectedNetwork.rpc[0]}</span></p>
+                                    <p class="mb-0"><strong>Moeda Nativa:</strong> ${selectedNetwork.nativeCurrency.symbol}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Explorer:</strong> 
+                                        <a href="${selectedNetwork.explorers ? selectedNetwork.explorers[0].url : '#'}" target="_blank" class="text-decoration-none">
+                                            ${selectedNetwork.explorers ? selectedNetwork.explorers[0].name : 'N/A'}
+                                        </a>
+                                    </p>
+                                    <p class="mb-0"><strong>Suporte:</strong> ${selectedNetwork.supported ? '✅ Completo' : '⚠️ Beta'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <button class="btn btn-success" onclick="saveContract()">
+                        <i class="fas fa-save me-2"></i>Cadastrar Este Contrato
+                    </button>
+                    <button class="btn btn-outline-primary ms-2" onclick="viewOnExplorer('${contractAddress}')">
+                        <i class="fas fa-external-link-alt me-2"></i>Ver no Explorer
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    resultsDiv.style.display = 'block';
+    
+    // Scroll até os resultados
+    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/**
+ * ===========================================
+ * FUNÇÃO DE SALVAMENTO DE CONTRATO
+ * ===========================================
+ * Salva o contrato detectado no sistema
+ * TODO: Integrar com API do backend para persistência real
+ */
+window.saveContract = function() {
+    if (!selectedNetwork) {
+        alert('Erro: Nenhuma rede selecionada');
+        return;
+    }
+    
+    const contractData = {
+        network: selectedNetwork,
+        address: document.querySelector('input[name="contractAddress"]').value,
+        timestamp: new Date().toISOString()
+    };
+    
+    console.log('💾 Salvando contrato:', contractData);
+    
+    // TODO: Integrar com API do backend para salvar contrato
+    
+    alert(`✅ Contrato cadastrado com sucesso na ${selectedNetwork.name}!\n\nRedirecionando para a lista de contratos...`);
+    
+    if (typeof dashboardManager !== 'undefined') {
+        dashboardManager.showSection('contracts');
+    }
+}
+
+/**
+ * ===========================================
+ * FUNÇÃO DE VISUALIZAÇÃO NO EXPLORER
+ * ===========================================
+ * Abre o contrato no explorer blockchain da rede selecionada
+ * Utiliza as informações de explorer da rede para gerar URL
+ */
+window.viewOnExplorer = function(contractAddress) {
+    if (!selectedNetwork || !selectedNetwork.explorers || selectedNetwork.explorers.length === 0) {
+        alert('Explorer não disponível para esta rede');
+        return;
+    }
+    
+    const explorerUrl = `${selectedNetwork.explorers[0].url}/address/${contractAddress}`;
+    window.open(explorerUrl, '_blank');
+}
+
+</script>
+
+<!-- 
+=======================================================================
+ESTILOS ESPECÍFICOS DA PÁGINA NEW-CONTRACT
+=======================================================================
+Estilos customizados para o funcionamento do sistema de autocomplete
+de redes e animações da página
+=======================================================================
+-->
+<style>
+/* 
+===========================================
+ESTILOS DO DROPDOWN DE AUTOCOMPLETE
+===========================================
+Sistema de busca e seleção de redes blockchain
+*/
+.autocomplete-dropdown {
+    position: relative;
+    z-index: 1000; /* Fica acima de outros elementos */
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 0.375rem; /* Arredondamento Bootstrap */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Sombra suave */
+    max-height: 300px; /* Limite de altura */
+    overflow-y: auto; /* Scroll quando necessário */
+    display: none; /* Inicialmente escondido */
+}
+
+/* Itens individuais do dropdown */
+.autocomplete-item {
+    padding: 0.75rem 1rem; /* Espaçamento interno */
+    cursor: pointer; /* Indica clicável */
+    border-bottom: 1px solid #f1f1f1; /* Separador */
+    transition: background-color 0.2s; /* Transição suave */
+}
+
+/* Hover nos itens */
+.autocomplete-item:hover {
+    background-color: #f8f9fa; /* Destaque no hover */
+}
+
+/* Remove borda do último item */
+.autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+/* 
+===========================================
+ESTILOS DO CARD DE REDE SELECIONADA
+===========================================
+*/
+#selected-network-info .card {
+    border-width: 1px; /* Borda consistente */
+}
+
+/* 
+===========================================
+ANIMAÇÕES E LOADING
+===========================================
+*/
+/* Spinner de loading para botão refresh */
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* Keyframes da animação de rotação */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+</style>

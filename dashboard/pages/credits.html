@@ -1,0 +1,81 @@
+<!-- Créditos Page -->
+<div class="credits-section">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>💰 Créditos</h2>
+        <button class="btn btn-success" onclick="dashboardManager.showSection('buy-credits')">
+            <i class="fas fa-shopping-cart me-2"></i>Comprar Créditos
+        </button>
+    </div>
+    
+    <!-- Cards de Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-wallet stat-icon text-success mb-2"></i>
+                    <h3 id="current-credits" class="stat-number">1,250</h3>
+                    <p class="stat-label">Saldo Atual</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-shopping-cart stat-icon text-info mb-2"></i>
+                    <h3 id="total-purchased" class="stat-number">2,000</h3>
+                    <p class="stat-label">Total Comprado</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-bar stat-icon text-warning mb-2"></i>
+                    <h3 id="total-used" class="stat-number">750</h3>
+                    <p class="stat-label">Total Usado</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Informações sobre Créditos -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Como Funcionam os Créditos</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6><i class="fas fa-info-circle text-primary me-2"></i>Sistema Descentralizado</h6>
+                    <p class="text-muted">
+                        Os créditos são usados para manter a plataforma funcionando. 
+                        Cada transação no seu contrato consome alguns créditos para 
+                        processar as taxas.
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <h6><i class="fas fa-chart-line text-success me-2"></i>Ganhe com suas Vendas</h6>
+                    <p class="text-muted">
+                        Você ganha uma porcentagem (padrão 2.5%) de todas as vendas 
+                        realizadas através dos seus contratos cadastrados.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Histórico Recente -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Histórico de Créditos</h5>
+        </div>
+        <div class="card-body">
+            <div id="credits-history">
+                <div class="text-center py-3">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p class="mt-2 text-muted">Carregando histórico...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,353 @@
+<!-- Configurações Page -->
+<div class="settings-section">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Configurações</h2>
+        <button class="btn btn-success" onclick="saveSettings()">
+            <i class="fas fa-save"></i> Salvar Alterações
+        </button>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Configurações da Conta -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Informações da Conta</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="user-name" placeholder="Seu nome">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="user-email" placeholder="seu@email.com">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Empresa/Organização</label>
+                            <input type="text" class="form-control" id="user-company" placeholder="Nome da empresa">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="user-phone" placeholder="+55 11 99999-9999">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configurações de Notificação -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Notificações</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="email-notifications" checked>
+                        <label class="form-check-label" for="email-notifications">
+                            Notificações por Email
+                        </label>
+                        <small class="form-text text-muted d-block">Receber emails sobre transações e atualizações</small>
+                    </div>
+                    
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="transaction-alerts" checked>
+                        <label class="form-check-label" for="transaction-alerts">
+                            Alertas de Transação
+                        </label>
+                        <small class="form-text text-muted d-block">Notificação imediata para cada transação</small>
+                    </div>
+                    
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="weekly-reports">
+                        <label class="form-check-label" for="weekly-reports">
+                            Relatórios Semanais
+                        </label>
+                        <small class="form-text text-muted d-block">Resumo semanal de performance</small>
+                    </div>
+                    
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="marketing-emails">
+                        <label class="form-check-label" for="marketing-emails">
+                            Emails de Marketing
+                        </label>
+                        <small class="form-text text-muted d-block">Novidades e dicas sobre o produto</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configurações de Segurança -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Segurança</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Carteira Principal</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="main-wallet" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="disconnectWallet()">
+                                <i class="fas fa-unlink"></i> Desconectar
+                            </button>
+                        </div>
+                        <small class="form-text text-muted">Esta é a carteira conectada atualmente</small>
+                    </div>
+                    
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="two-factor-auth">
+                        <label class="form-check-label" for="two-factor-auth">
+                            Autenticação de Dois Fatores (2FA)
+                        </label>
+                        <small class="form-text text-muted d-block">Adiciona uma camada extra de segurança</small>
+                    </div>
+                    
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="login-alerts" checked>
+                        <label class="form-check-label" for="login-alerts">
+                            Alertas de Login
+                        </label>
+                        <small class="form-text text-muted d-block">Notificar sobre novos logins na conta</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configurações de API -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">API & Webhooks</h5>
+                    <button class="btn btn-outline-primary btn-sm" onclick="generateApiKey()">
+                        <i class="fas fa-key"></i> Gerar Nova Chave
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">API Key</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="api-key" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="toggleApiKey()">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-outline-primary" type="button" onclick="copyApiKey()">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Webhook URL</label>
+                        <input type="url" class="form-control" id="webhook-url" placeholder="https://seusite.com/webhook">
+                        <small class="form-text text-muted">URL para receber notificações de transações</small>
+                    </div>
+                    
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="webhook-enabled">
+                        <label class="form-check-label" for="webhook-enabled">
+                            Ativar Webhooks
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar com Informações -->
+        <div class="col-lg-4">
+            <!-- Resumo da Conta -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Resumo da Conta</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Widgets Ativos:</span>
+                        <strong id="active-widgets-count">-</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Total de Transações:</span>
+                        <strong id="total-transactions-count">-</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Membro desde:</span>
+                        <strong id="member-since">-</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Último Login:</span>
+                        <strong id="last-login">-</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exportar Dados -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Exportar Dados</h5>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted">Baixe seus dados em diferentes formatos:</p>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary btn-sm" onclick="exportData('json')">
+                            <i class="fas fa-download"></i> JSON
+                        </button>
+                        <button class="btn btn-outline-success btn-sm" onclick="exportData('csv')">
+                            <i class="fas fa-file-csv"></i> CSV
+                        </button>
+                        <button class="btn btn-outline-info btn-sm" onclick="exportData('pdf')">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zona de Perigo -->
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Zona de Perigo</h5>
+                </div>
+                <div class="card-body">
+                    <p class="small">Ações irreversíveis que afetam sua conta:</p>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-warning btn-sm" onclick="clearAllData()">
+                            <i class="fas fa-trash"></i> Limpar Dados
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="deleteAccount()">
+                            <i class="fas fa-user-times"></i> Excluir Conta
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Carregar configurações salvas
+document.addEventListener('DOMContentLoaded', function() {
+    loadUserSettings();
+    loadAccountSummary();
+});
+
+function loadUserSettings() {
+    // Carregar dados do usuário do localStorage ou API
+    const userData = JSON.parse(localStorage.getItem('userSettings') || '{}');
+    
+    if (userData.name) document.getElementById('user-name').value = userData.name;
+    if (userData.email) document.getElementById('user-email').value = userData.email;
+    if (userData.company) document.getElementById('user-company').value = userData.company;
+    if (userData.phone) document.getElementById('user-phone').value = userData.phone;
+    
+    // Carregar configurações de notificação
+    document.getElementById('email-notifications').checked = userData.emailNotifications !== false;
+    document.getElementById('transaction-alerts').checked = userData.transactionAlerts !== false;
+    document.getElementById('weekly-reports').checked = userData.weeklyReports === true;
+    document.getElementById('marketing-emails').checked = userData.marketingEmails === true;
+    
+    // Carregar configurações de segurança
+    document.getElementById('two-factor-auth').checked = userData.twoFactorAuth === true;
+    document.getElementById('login-alerts').checked = userData.loginAlerts !== false;
+    
+    // Carregar configurações de API
+    if (userData.webhookUrl) document.getElementById('webhook-url').value = userData.webhookUrl;
+    document.getElementById('webhook-enabled').checked = userData.webhookEnabled === true;
+}
+
+function loadAccountSummary() {
+    // Simular carregamento de dados da conta
+    document.getElementById('active-widgets-count').textContent = '3';
+    document.getElementById('total-transactions-count').textContent = '127';
+    document.getElementById('member-since').textContent = 'Jan 2024';
+    document.getElementById('last-login').textContent = 'Agora';
+}
+
+function saveSettings() {
+    const settings = {
+        name: document.getElementById('user-name').value,
+        email: document.getElementById('user-email').value,
+        company: document.getElementById('user-company').value,
+        phone: document.getElementById('user-phone').value,
+        emailNotifications: document.getElementById('email-notifications').checked,
+        transactionAlerts: document.getElementById('transaction-alerts').checked,
+        weeklyReports: document.getElementById('weekly-reports').checked,
+        marketingEmails: document.getElementById('marketing-emails').checked,
+        twoFactorAuth: document.getElementById('two-factor-auth').checked,
+        loginAlerts: document.getElementById('login-alerts').checked,
+        webhookUrl: document.getElementById('webhook-url').value,
+        webhookEnabled: document.getElementById('webhook-enabled').checked
+    };
+    
+    localStorage.setItem('userSettings', JSON.stringify(settings));
+    
+    // Mostrar mensagem de sucesso
+    if (typeof window.showToast === 'function') {
+        window.showToast('Configurações salvas com sucesso!', 'success');
+    } else {
+        alert('Configurações salvas com sucesso!');
+    }
+}
+
+function generateApiKey() {
+    const newKey = 'xcafe_' + Math.random().toString(36).substr(2, 32);
+    document.getElementById('api-key').value = newKey;
+    if (typeof window.showToast === 'function') {
+        window.showToast('Nova API Key gerada!', 'info');
+    }
+}
+
+function toggleApiKey() {
+    const input = document.getElementById('api-key');
+    const button = input.nextElementSibling;
+    const icon = button.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fas fa-eye-slash';
+    } else {
+        input.type = 'password';
+        icon.className = 'fas fa-eye';
+    }
+}
+
+function copyApiKey() {
+    const apiKey = document.getElementById('api-key').value;
+    navigator.clipboard.writeText(apiKey).then(() => {
+        if (typeof window.showToast === 'function') {
+            window.showToast('API Key copiada!', 'success');
+        }
+    });
+}
+
+function disconnectWallet() {
+    if (confirm('Tem certeza que deseja desconectar sua carteira?')) {
+        // Implementar desconexão da carteira
+        if (typeof dashboardManager !== 'undefined') {
+            dashboardManager.disconnectWallet();
+        }
+    }
+}
+
+function exportData(format) {
+    if (typeof dashboardManager !== 'undefined') {
+        dashboardManager.exportData(format);
+    } else {
+        alert(`Exportando dados em formato ${format.toUpperCase()}...`);
+    }
+}
+
+function clearAllData() {
+    if (confirm('ATENÇÃO: Isso irá limpar todos os seus dados! Esta ação é irreversível. Tem certeza?')) {
+        // Implementar limpeza de dados
+        localStorage.clear();
+        if (typeof window.showToast === 'function') {
+            window.showToast('Dados limpos com sucesso!', 'warning');
+        }
+    }
+}
+
+function deleteAccount() {
+    const confirmation = prompt('Para excluir sua conta, digite "EXCLUIR" (em maiúsculas):');
+    if (confirmation === 'EXCLUIR') {
+        if (confirm('Última confirmação: Tem ABSOLUTA certeza que deseja excluir sua conta?')) {
+            // Implementar exclusão da conta
+            alert('Funcionalidade em desenvolvimento. Entre em contato com o suporte.');
+        }
+    }
+}
+</script>

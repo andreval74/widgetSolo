@@ -1,0 +1,442 @@
+<!-- Relatórios Page -->
+<div class="reports-section">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Relatórios & Analytics</h2>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary" onclick="refreshReports()">
+                <i class="fas fa-sync-alt"></i> Atualizar
+            </button>
+            <button class="btn btn-success" onclick="exportReport()">
+                <i class="fas fa-download"></i> Exportar
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros de Período -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label">Período</label>
+                    <select class="form-select" id="period-filter">
+                        <option value="today">Hoje</option>
+                        <option value="week">Esta Semana</option>
+                        <option value="month" selected>Este Mês</option>
+                        <option value="quarter">Este Trimestre</option>
+                        <option value="year">Este Ano</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                </div>
+                <div class="col-md-3" id="custom-date-from" style="display: none;">
+                    <label class="form-label">Data Inicial</label>
+                    <input type="date" class="form-control" id="date-from">
+                </div>
+                <div class="col-md-3" id="custom-date-to" style="display: none;">
+                    <label class="form-label">Data Final</label>
+                    <input type="date" class="form-control" id="date-to">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Widget</label>
+                    <select class="form-select" id="widget-filter">
+                        <option value="">Todos os Widgets</option>
+                        <!-- Será preenchido dinamicamente -->
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-primary w-100" onclick="applyFilters()">
+                        <i class="fas fa-filter"></i> Aplicar Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards de Métricas -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-dollar-sign stat-icon text-success mb-2"></i>
+                    <h3 id="total-revenue" class="stat-number">R$ 0,00</h3>
+                    <p class="stat-label">Receita Total</p>
+                    <small class="text-muted" id="revenue-change">+0% vs período anterior</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-exchange-alt stat-icon text-primary mb-2"></i>
+                    <h3 id="total-transactions" class="stat-number">0</h3>
+                    <p class="stat-label">Transações</p>
+                    <small class="text-muted" id="transactions-change">+0% vs período anterior</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line stat-icon text-info mb-2"></i>
+                    <h3 id="avg-transaction" class="stat-number">R$ 0,00</h3>
+                    <p class="stat-label">Valor Médio</p>
+                    <small class="text-muted" id="avg-change">+0% vs período anterior</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-percentage stat-icon text-warning mb-2"></i>
+                    <h3 id="conversion-rate" class="stat-number">0%</h3>
+                    <p class="stat-label">Taxa Conversão</p>
+                    <small class="text-muted" id="conversion-change">+0% vs período anterior</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Receita ao Longo do Tempo</h5>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <input type="radio" class="btn-check" name="chart-type" id="line-chart" checked>
+                        <label class="btn btn-outline-primary" for="line-chart">Linha</label>
+                        
+                        <input type="radio" class="btn-check" name="chart-type" id="bar-chart">
+                        <label class="btn btn-outline-primary" for="bar-chart">Barras</label>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="revenue-chart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Top Widgets por Receita</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="widgets-chart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Transações Detalhadas -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Transações Detalhadas</h5>
+            <div class="d-flex gap-2">
+                <input type="text" class="form-control form-control-sm" style="width: 200px;" 
+                       placeholder="Buscar transação..." id="transaction-search">
+                <button class="btn btn-sm btn-outline-primary" onclick="searchTransactions()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Widget</th>
+                            <th>Valor</th>
+                            <th>Taxa</th>
+                            <th>Status</th>
+                            <th>Hash</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Será preenchido dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="transactions-loading" class="text-center py-4">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p class="mt-2">Carregando transações...</p>
+            </div>
+            
+            <!-- Empty State -->
+            <div id="transactions-empty" class="text-center py-4" style="display: none;">
+                <i class="fas fa-inbox fa-2x text-muted mb-3"></i>
+                <p class="text-muted">Nenhuma transação encontrada para o período selecionado.</p>
+            </div>
+        </div>
+        
+        <!-- Paginação -->
+        <div class="card-footer">
+            <nav aria-label="Transações pagination">
+                <ul class="pagination pagination-sm justify-content-center mb-0" id="transactions-pagination">
+                    <!-- Será preenchido dinamicamente -->
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPage = 1;
+let currentFilters = {};
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeReports();
+    setupEventListeners();
+});
+
+function initializeReports() {
+    loadMetrics();
+    loadCharts();
+    loadTransactions();
+    loadWidgetsList();
+}
+
+function setupEventListeners() {
+    // Filtro de período personalizado
+    document.getElementById('period-filter').addEventListener('change', function() {
+        const customDates = document.getElementById('custom-date-from').parentElement;
+        const customDatesTo = document.getElementById('custom-date-to').parentElement;
+        
+        if (this.value === 'custom') {
+            customDates.style.display = 'block';
+            customDatesTo.style.display = 'block';
+        } else {
+            customDates.style.display = 'none';
+            customDatesTo.style.display = 'none';
+        }
+    });
+
+    // Tipo de gráfico
+    document.querySelectorAll('input[name="chart-type"]').forEach(radio => {
+        radio.addEventListener('change', updateChartType);
+    });
+}
+
+function loadMetrics() {
+    // Simular carregamento de métricas
+    setTimeout(() => {
+        document.getElementById('total-revenue').textContent = 'R$ 15.420,50';
+        document.getElementById('revenue-change').textContent = '+12.5% vs período anterior';
+        document.getElementById('revenue-change').className = 'text-success';
+
+        document.getElementById('total-transactions').textContent = '247';
+        document.getElementById('transactions-change').textContent = '+8.3% vs período anterior';
+        document.getElementById('transactions-change').className = 'text-success';
+
+        document.getElementById('avg-transaction').textContent = 'R$ 62,43';
+        document.getElementById('avg-change').textContent = '+3.7% vs período anterior';
+        document.getElementById('avg-change').className = 'text-success';
+
+        document.getElementById('conversion-rate').textContent = '4.2%';
+        document.getElementById('conversion-change').textContent = '-0.8% vs período anterior';
+        document.getElementById('conversion-change').className = 'text-warning';
+    }, 1000);
+}
+
+function loadCharts() {
+    // Dados simulados para o gráfico de receita
+    const revenueData = {
+        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+        datasets: [{
+            label: 'Receita (R$)',
+            data: [1200, 1900, 3000, 2500, 3200, 4100],
+            borderColor: '#007bff',
+            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+            fill: true
+        }]
+    };
+
+    const revenueCtx = document.getElementById('revenue-chart').getContext('2d');
+    new Chart(revenueCtx, {
+        type: 'line',
+        data: revenueData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'R$ ' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Gráfico de widgets
+    const widgetsData = {
+        labels: ['Pagamento', 'Doação', 'Assinatura'],
+        datasets: [{
+            data: [65, 25, 10],
+            backgroundColor: ['#007bff', '#28a745', '#ffc107']
+        }]
+    };
+
+    const widgetsCtx = document.getElementById('widgets-chart').getContext('2d');
+    new Chart(widgetsCtx, {
+        type: 'doughnut',
+        data: widgetsData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+
+function loadTransactions() {
+    const tbody = document.querySelector('#transactions-table tbody');
+    const loading = document.getElementById('transactions-loading');
+    const empty = document.getElementById('transactions-empty');
+
+    // Mostrar loading
+    tbody.innerHTML = '';
+    loading.style.display = 'block';
+    empty.style.display = 'none';
+
+    // Simular carregamento
+    setTimeout(() => {
+        const transactions = [
+            {
+                date: '2024-01-15 14:30',
+                widget: 'Pagamento Café',
+                value: 'R$ 25,00',
+                fee: 'R$ 1,25',
+                status: 'Concluído',
+                hash: '0x123...abc',
+                id: '1'
+            },
+            {
+                date: '2024-01-15 13:15',
+                widget: 'Doação Projeto',
+                value: 'R$ 50,00',
+                fee: 'R$ 2,50',
+                status: 'Concluído',
+                hash: '0x456...def',
+                id: '2'
+            },
+            {
+                date: '2024-01-15 11:45',
+                widget: 'Assinatura Premium',
+                value: 'R$ 99,00',
+                fee: 'R$ 4,95',
+                status: 'Pendente',
+                hash: '0x789...ghi',
+                id: '3'
+            }
+        ];
+
+        loading.style.display = 'none';
+
+        if (transactions.length === 0) {
+            empty.style.display = 'block';
+        } else {
+            tbody.innerHTML = transactions.map(tx => `
+                <tr>
+                    <td>${tx.date}</td>
+                    <td>${tx.widget}</td>
+                    <td><strong>${tx.value}</strong></td>
+                    <td>${tx.fee}</td>
+                    <td>
+                        <span class="badge bg-${tx.status === 'Concluído' ? 'success' : 'warning'}">
+                            ${tx.status}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="#" onclick="viewTransaction('${tx.hash}')" class="text-primary">
+                            ${tx.hash}
+                        </a>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-primary" onclick="viewTransactionDetails('${tx.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="exportTransaction('${tx.id}')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+    }, 1500);
+}
+
+function loadWidgetsList() {
+    const select = document.getElementById('widget-filter');
+    const widgets = ['Pagamento Café', 'Doação Projeto', 'Assinatura Premium'];
+    
+    widgets.forEach(widget => {
+        const option = document.createElement('option');
+        option.value = widget;
+        option.textContent = widget;
+        select.appendChild(option);
+    });
+}
+
+function applyFilters() {
+    const period = document.getElementById('period-filter').value;
+    const widget = document.getElementById('widget-filter').value;
+    const dateFrom = document.getElementById('date-from').value;
+    const dateTo = document.getElementById('date-to').value;
+
+    currentFilters = { period, widget, dateFrom, dateTo };
+    
+    // Recarregar dados com filtros
+    loadMetrics();
+    loadTransactions();
+    
+    if (typeof window.showToast === 'function') {
+        window.showToast('Filtros aplicados com sucesso!', 'info');
+    }
+}
+
+function refreshReports() {
+    initializeReports();
+    if (typeof window.showToast === 'function') {
+        window.showToast('Relatórios atualizados!', 'success');
+    }
+}
+
+function exportReport() {
+    // Implementar exportação do relatório
+    if (typeof window.showToast === 'function') {
+        window.showToast('Relatório exportado com sucesso!', 'success');
+    }
+}
+
+function updateChartType() {
+    // Implementar mudança do tipo de gráfico
+    console.log('Atualizando tipo de gráfico...');
+}
+
+function searchTransactions() {
+    const searchTerm = document.getElementById('transaction-search').value;
+    console.log('Buscando por:', searchTerm);
+    // Implementar busca
+}
+
+function viewTransaction(hash) {
+    window.open(`https://etherscan.io/tx/${hash}`, '_blank');
+}
+
+function viewTransactionDetails(id) {
+    console.log('Ver detalhes da transação:', id);
+    // Implementar modal de detalhes
+}
+
+function exportTransaction(id) {
+    console.log('Exportar transação:', id);
+    // Implementar exportação individual
+}
+</script>

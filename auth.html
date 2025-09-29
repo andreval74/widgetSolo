@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 Autenticação - XCafe Widget SaaS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Ethers.js via UNPKG -->
+    <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    
+    <!-- CSS UNIFICADO - Substitui app.css + auth.css -->
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="auth-container">
+                    <!-- Etapa 1: Verificação MetaMask -->
+                    <div id="step-metamask" class="auth-step">
+                        <div class="status-icon">🦊</div>
+                        <h2>Conectar MetaMask</h2>
+                        <p class="text-muted">Conecte sua carteira para acessar o sistema</p>
+                        <button class="btn wallet-btn" onclick="connectWallet()">
+                            <i class="fab fa-ethereum"></i> Conectar Carteira
+                        </button>
+                        <div id="metamask-error" class="error-msg" style="display: none;"></div>
+                    </div>
+
+                    <!-- Etapa 2: Primeiro Admin Setup -->
+                    <div id="step-first-admin" class="auth-step hidden">
+                        <div class="status-icon">👑</div>
+                        <h2>Configuração Inicial</h2>
+                        <p><strong>Primeira carteira detectada!</strong></p>
+                        <p>Configure como Super Administrador do sistema</p>
+                        <div class="wallet-address" id="first-admin-address"></div>
+                        <button class="btn wallet-btn setup-btn" onclick="setupFirstAdmin()">
+                            <i class="fas fa-crown"></i> Configurar como Super Admin
+                        </button>
+                        <div class="loading" id="setup-loading" style="display: none;">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <p>Configurando sistema...</p>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 3: Acesso Admin -->
+                    <div id="step-admin" class="auth-step hidden">
+                        <div class="status-icon">🎛️</div>
+                        <h2>Acesso Administrativo</h2>
+                        <div class="wallet-address" id="admin-address"></div>
+                        <div class="user-type-badge" id="admin-type"></div>
+                        <p>Clique para acessar o painel administrativo</p>
+                        <button class="btn wallet-btn admin-btn" onclick="enterAdmin()">
+                            <i class="fas fa-tools"></i> Acessar Painel Admin
+                        </button>
+                    </div>
+
+                    <!-- Etapa 4: Usuário Normal -->
+                    <div id="step-user" class="auth-step hidden">
+                        <div class="status-icon">👤</div>
+                        <h2>Bem-vindo ao XCafe</h2>
+                        <div class="wallet-address" id="user-address"></div>
+                        <div class="user-type-badge normal">Usuário</div>
+                        <p>Sua carteira foi registrada automaticamente</p>
+                        <button class="btn wallet-btn user-btn" onclick="enterApp()">
+                            <i class="fas fa-rocket"></i> Usar Aplicação
+                        </button>
+                    </div>
+
+                    <!-- Loading Geral -->
+                    <div id="loading" class="auth-step hidden">
+                        <div class="status-icon">⏳</div>
+                        <h3>Verificando...</h3>
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="text-muted mt-3">Verificando tipo de usuário e permissões</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Auth JS -->
+    <script src="js/auth-page.js"></script>
+
+    <!-- JavaScript Unificado -->
+    <script src="js/modules/web3.js"></script>
+    <script src="js/shared/api.js"></script>
+    <script src="js/shared/auth.js"></script>
+    <script src="js/xcafe-app.js"></script>
+</body>
+</html>

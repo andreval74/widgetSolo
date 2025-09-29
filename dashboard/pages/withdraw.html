@@ -1,0 +1,115 @@
+<!-- Saques Page -->
+<div class="withdraw-section">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>🏦 Saques</h2>
+        <button class="btn btn-success" onclick="initiateWithdraw()" disabled>
+            <i class="fas fa-arrow-up me-2"></i>Solicitar Saque
+        </button>
+    </div>
+
+    <!-- Saldo Disponível -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-wallet stat-icon text-success mb-2"></i>
+                    <h3 id="available-balance" class="stat-number">0.00 ETH</h3>
+                    <p class="stat-label">Saldo Disponível</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock stat-icon text-warning mb-2"></i>
+                    <h3 id="pending-withdraws" class="stat-number">0.00 ETH</h3>
+                    <p class="stat-label">Saques Pendentes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle stat-icon text-info mb-2"></i>
+                    <h3 id="total-withdrawn" class="stat-number">0.00 ETH</h3>
+                    <p class="stat-label">Total Sacado</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status de Desenvolvimento -->
+    <div class="alert alert-info">
+        <i class="fas fa-construction me-2"></i>
+        <strong>Em Desenvolvimento:</strong> Sistema de saque automático das comissões ganhas 
+        direto para sua carteira MetaMask está sendo implementado.
+    </div>
+
+    <!-- Configurações de Saque -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Configurações de Saque</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label class="form-label">Saque Automático</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="auto-withdraw" disabled>
+                            <label class="form-check-label" for="auto-withdraw">
+                                Ativar saque automático quando atingir o valor mínimo
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label">Valor Mínimo para Saque</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" value="0.01" step="0.01" disabled>
+                            <span class="input-group-text">ETH</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label class="form-label">Carteira de Destino</label>
+                        <input type="text" class="form-control" id="withdraw-wallet" placeholder="0x..." disabled>
+                        <small class="form-text text-muted">
+                            Por padrão, será usado o endereço da carteira conectada
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Histórico de Saques -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Histórico de Saques</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                            <th>Hash da Transação</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="withdraw-history">
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <i class="fas fa-info-circle fa-2x text-muted"></i>
+                                <p class="mt-3 text-muted">Nenhum saque realizado ainda</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

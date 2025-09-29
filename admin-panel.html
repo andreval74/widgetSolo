@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<!-- 
+=======================================================================
+PAINEL ADMINISTRATIVO - Widget SaaS
+=======================================================================
+Interface de administração completa para gerenciamento do sistema:
+
+FUNCIONALIDADES:
+✅ Dashboard com estatísticas gerais
+✅ Gerenciamento de administradores e permissões
+✅ Controle de widgets e contratos
+✅ Analytics e relatórios financeiros
+✅ Sistema de créditos e transações
+✅ Configurações de blockchain e redes
+✅ Gerenciamento de sistema de chains dinâmico
+✅ Logs e auditoria de ações
+
+HIERARQUIA DE PERMISSÕES:
+- Super Admin: Acesso total (primeiro usuário do sistema)
+- Admin: Gerenciamento de usuários e widgets
+- Moderador: Visualização e relatórios básicos
+
+RECURSOS TÉCNICOS:
+- Autenticação Web3 (MetaMask)
+- Sistema modular de navegação
+- Integração com chains.json dinâmico
+- Interface responsiva Bootstrap 5
+- Sistema de notificações em tempo real
+=======================================================================
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎛️ Painel Administrativo - XCafe Widget SaaS</title>
+    
+    <!-- 
+    ===========================================
+    DEPENDÊNCIAS EXTERNAS
+    ===========================================
+    Bootstrap 5 para interface responsiva
+    Font Awesome para ícones
+    CSS unificado do sistema
+    ===========================================
+    -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- CSS UNIFICADO - Substitui app.css + menu.css + admin.css -->
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 
+    ===========================================
+    BOTÃO DE TOGGLE DO MENU LATERAL
+    ===========================================
+    Controla a exibição/ocultação da sidebar em
+    dispositivos menores e desktop
+    ===========================================
+    -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- 
+    ===========================================
+    SIDEBAR DE NAVEGAÇÃO ADMINISTRATIVA
+    ===========================================
+    Menu lateral com todas as seções administrativas
+    Sistema de permissões baseado em data-auth
+    ===========================================
+    -->
+    <nav class="admin-sidebar" id="adminSidebar">
+        <!-- Cabeçalho da sidebar com informações do usuário -->
+        <div class="sidebar-header">
+            <h4 class="text-white mb-0">
+                <i class="fas fa-cog me-2"></i>
+                Admin Panel
+            </h4>
+            <!-- Informações do usuário logado (wallet + nível) -->
+            <small class="text-light opacity-75" id="userInfo">Carregando...</small>
+        </div>
+        
+        <!-- 
+        ===========================================
+        MENU DE NAVEGAÇÃO PRINCIPAL
+        ===========================================
+        Links organizados por hierarquia de permissões:
+        - Todos: Dashboard, Widgets
+        - Admin+: Administradores, Analytics
+        - Super Admin: Configurações, Logs
+        ===========================================
+        -->
+        <ul class="admin-nav">
+            <!-- Dashboard - Acesso geral -->
+            <li class="admin-nav-item">
+                <a href="#dashboard" class="admin-nav-link" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt me-2"></i>
+                    Dashboard
+                </a>
+            </li>
+            
+            <!-- Administradores - Somente Admin+ -->
+            <li class="admin-nav-item" data-auth="admin">
+                <a href="#admins" class="admin-nav-link" data-section="admins">
+                    <i class="fas fa-users-cog me-2"></i>
+                    Administradores
+                </a>
+            </li>
+            
+            <!-- Widgets - Acesso geral -->
+            <li class="admin-nav-item">
+                <a href="#widgets" class="admin-nav-link" data-section="widgets">
+                    <i class="fas fa-puzzle-piece me-2"></i>
+                    Widgets
+                </a>
+            </li>
+            
+            <!-- Analytics - Somente Admin+ -->
+            <li class="admin-nav-item" data-auth="admin">
+                <a href="#analytics" class="admin-nav-link" data-section="analytics">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Analytics
+                </a>
+            </li>
+            <li class="admin-nav-item" data-auth="super-admin">
+                <a href="#system" class="admin-nav-link" data-section="system">
+                    <i class="fas fa-server me-2"></i>
+                    Sistema
+                </a>
+            </li>
+            <li class="admin-nav-item" data-auth="admin">
+                <a href="#chains" class="admin-nav-link" data-section="chains">
+                    <i class="fas fa-link me-2"></i>
+                    Redes Blockchain
+                </a>
+            </li>
+            <li class="admin-nav-item" data-auth="admin">
+                <a href="#emails" class="admin-nav-link" data-section="emails">
+                    <i class="fas fa-envelope-open-text me-2"></i>
+                    Config. E-mails
+                </a>
+            </li>
+            <li class="admin-nav-item">
+                <a href="#" class="admin-nav-link" onclick="auth.logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    Sair
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main class="admin-content" id="adminContent">
+        <!-- Dashboard Section -->
+        <section id="section-dashboard" class="admin-section active">
+            <div class="container-fluid">
+                <div class="row mb-4">
+                    <div class="col">
+                        <h1><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h1>
+                        <p class="text-muted">Visão geral do sistema</p>
+                    </div>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="dashboard-stats" id="dashboardStats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalWidgets">0</div>
+                        <div class="stat-label">Widgets Ativos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalAdmins">0</div>
+                        <div class="stat-label">Administradores</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalTransactions">0</div>
+                        <div class="stat-label">Transações</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="systemUptime">Online</div>
+                        <div class="stat-label">Status do Sistema</div>
+                    </div>
+                </div>
+
+                <!-- Activity Feed -->
+                <div class="row mt-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Atividade Recente</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="activityFeed">
+                                    <p class="text-muted">Carregando atividades...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Sistema</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary" onclick="loadSystemStats()">
+                                        <i class="fas fa-sync me-1"></i>
+                                        Atualizar Stats
+                                    </button>
+                                    <button class="btn btn-outline-info" onclick="checkHealth()">
+                                        <i class="fas fa-heartbeat me-1"></i>
+                                        Health Check
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Administradores Section -->
+        <section id="section-admins" class="admin-section" data-auth="admin">
+            <div class="container-fluid">
+                <div class="row mb-4">
+                    <div class="col">
+                        <h1><i class="fas fa-users-cog me-2"></i>Administradores</h1>
+                        <p class="text-muted">Gerenciar administradores do sistema</p>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-primary" onclick="showCreateAdminModal()">
+                            <i class="fas fa-plus me-1"></i>
+                            Novo Admin
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lista de Admins -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table" id="adminsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Endereço</th>
+                                        <th>Nome</th>
+                                        <th>Tipo</th>
+                                        <th>Departamento</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminsTableBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center">Carregando...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Widgets Section -->
+        <section id="section-widgets" class="admin-section">
+            <div class="container-fluid">
+                <div class="row mb-4">
+                    <div class="col">
+                        <h1><i class="fas fa-puzzle-piece me-2"></i>Widgets</h1>
+                        <p class="text-muted">Gerenciar widgets do sistema</p>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-primary" onclick="showCreateWidgetModal()">
+                            <i class="fas fa-plus me-1"></i>
+                            Novo Widget
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Widget Grid -->
+                <div class="widget-grid" id="widgetsGrid">
+                    <div class="text-center">
+                        <p class="text-muted">Carregando widgets...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="section-analytics" class="admin-section" data-auth="admin">
+            <div class="container-fluid">
+                <div class="row mb-4">
+                    <div class="col">
+                        <h1><i class="fas fa-chart-line me-2"></i>Analytics</h1>
+                        <p class="text-muted">Análises e relatórios do sistema</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Widgets por Tipo</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="widgetTypeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Transações por Dia</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="transactionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sistema Section -->
+        <section id="section-system" class="admin-section" data-auth="super-admin">
+            <div class="container-fluid">
+                <div class="row mb-4">
+                    <div class="col">
+                        <h1><i class="fas fa-server me-2"></i>Sistema</h1>
+                        <p class="text-muted">Configurações avançadas do sistema</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card border-warning">
+                            <div class="card-header bg-warning text-dark">
+                                <h5 class="mb-0">⚠️ Zona de Perigo</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Ações irreversíveis que afetam todo o sistema.</p>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-danger" onclick="confirmSystemReset()">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                        Reset Completo do Sistema
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Informações do Sistema</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="systemInfo">
+                                    <p class="text-muted">Carregando informações...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Redes Blockchain Section -->
+        <section id="section-chains" class="admin-section" data-auth="admin">
+            <div class="container-fluid">
+                <div class="row mb-4">
+                    <div class="col">
+                        <h1><i class="fas fa-link me-2"></i>Redes Blockchain</h1>
+                        <p class="text-muted">Gerenciamento de redes blockchain suportadas</p>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-primary" onclick="refreshChains()">
+                            <i class="fas fa-sync-alt me-2"></i>Atualizar Redes
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Estatísticas das Redes -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <div class="fs-1 fw-bold" id="totalNetworks">-</div>
+                                <div class="small">Total de Redes</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <div class="fs-1 fw-bold" id="supportedNetworks">-</div>
+                                <div class="small">Redes Suportadas</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-dark">
+                            <div class="card-body text-center">
+                                <div class="fs-1 fw-bold" id="testnetworks">-</div>
+                                <div class="small">Redes de Teste</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                <div class="fs-1 fw-bold" id="cacheStatus">-</div>
+                                <div class="small">Status do Cache</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cache Management -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-database me-2"></i>
+                                    Gerenciamento do Cache
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Última Atualização:</strong> <span id="lastUpdate">-</span></p>
+                                        <p><strong>Redes em Cache:</strong> <span id="cachedNetworks">-</span></p>
+                                        <p class="mb-0"><strong>Próxima Atualização:</strong> <span id="nextUpdate">-</span></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-outline-primary" onclick="forceUpdateChains()">
+                                                <i class="fas fa-cloud-download-alt me-2"></i>
+                                                Forçar Atualização
+                                            </button>
+                                            <button class="btn btn-outline-warning" onclick="clearChainsCache()">
+                                                <i class="fas fa-trash me-2"></i>
+                                                Limpar Cache
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-cog me-2"></i>
+                                    Configurações
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="autoUpdateEnabled" checked>
+                                    <label class="form-check-label" for="autoUpdateEnabled">
+                                        Auto-atualização (5 dias)
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="testnetEnabled" checked>
+                                    <label class="form-check-label" for="testnetEnabled">
+                                        Incluir redes de teste
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="fallbackEnabled" checked>
+                                    <label class="form-check-label" for="fallbackEnabled">
+                                        Fallback local ativo
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="networksSearch" 
+                                   placeholder="Buscar por nome, Chain ID ou símbolo..." onkeyup="filterNetworks()">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex gap-2">
+                            <select class="form-select" id="networkFilter" onchange="filterNetworks()">
+                                <option value="">Todas as redes</option>
+                                <option value="supported">Apenas suportadas</option>
+                                <option value="mainnet">Apenas mainnet</option>
+                                <option value="testnet">Apenas testnet</option>
+                            </select>
+                            <button class="btn btn-outline-secondary" onclick="exportNetworks()">
+                                <i class="fas fa-download me-1"></i>
+                                Exportar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Networks Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list me-2"></i>
+                            Lista de Redes (<span id="networksCount">0</span>)
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive" style="max-height: 600px;">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead class="table-dark sticky-top">
+                                    <tr>
+                                        <th width="5%">
+                                            <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                                        </th>
+                                        <th width="25%">Nome da Rede</th>
+                                        <th width="10%">Chain ID</th>
+                                        <th width="10%">Símbolo</th>
+                                        <th width="15%">Tipo</th>
+                                        <th width="10%">Status</th>
+                                        <th width="15%">RPC Count</th>
+                                        <th width="10%">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="networksTableBody">
+                                    <tr>
+                                        <td colspan="8" class="text-center py-4">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Carregando...</span>
+                                            </div>
+                                            <p class="mt-2 text-muted">Carregando redes blockchain...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="text-muted">
+                                <span id="selectedCount">0</span> redes selecionadas
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-outline-success" onclick="enableSelectedNetworks()" disabled id="enableBtn">
+                                    <i class="fas fa-check me-1"></i>Habilitar
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning" onclick="disableSelectedNetworks()" disabled id="disableBtn">
+                                    <i class="fas fa-times me-1"></i>Desabilitar
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="removeSelectedNetworks()" disabled id="removeBtn">
+                                    <i class="fas fa-trash me-1"></i>Remover
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Network Details Modal -->
+                <div class="modal fade" id="networkModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Detalhes da Rede
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body" id="networkModalBody">
+                                <!-- Content loaded dynamically -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                <button type="button" class="btn btn-primary" onclick="testNetwork()">
+                                    <i class="fas fa-vials me-2"></i>Testar Conexão
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Configuração de E-mails Section -->
+        <section id="section-emails" class="admin-section" data-auth="admin">
+            <div class="container-fluid">
+                <div class="row mb-4">
+                    <div class="col">
+                        <h1><i class="fas fa-envelope-open-text me-2"></i>Configuração de E-mails</h1>
+                        <p class="text-muted">Gerencie os e-mails de destino por assunto do formulário de contato</p>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-success" onclick="addEmailConfig()">
+                            <i class="fas fa-plus me-2"></i>Adicionar Configuração
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Configurações Atuais -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-cog me-2"></i>E-mails por Assunto
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped" id="emailConfigTable">
+                                        <thead>
+                                            <tr>
+                                                <th width="30%">Assunto</th>
+                                                <th width="40%">E-mail Destino</th>
+                                                <th width="15%">Status</th>
+                                                <th width="15%">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="emailConfigList">
+                                            <!-- Configs carregadas dinamicamente -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configurações Globais -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-server me-2"></i>Configurações SMTP
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="smtpConfigForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Servidor SMTP</label>
+                                        <input type="text" class="form-control" id="smtpHost" placeholder="smtp.gmail.com">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Porta</label>
+                                                <input type="number" class="form-control" id="smtpPort" placeholder="587">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Segurança</label>
+                                                <select class="form-select" id="smtpSecurity">
+                                                    <option value="tls">TLS</option>
+                                                    <option value="ssl">SSL</option>
+                                                    <option value="none">Nenhuma</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Usuário</label>
+                                        <input type="email" class="form-control" id="smtpUser" placeholder="seu@email.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Senha</label>
+                                        <input type="password" class="form-control" id="smtpPass" placeholder="••••••••">
+                                    </div>
+                                    <button type="button" class="btn btn-primary" onclick="saveSmtpConfig()">
+                                        <i class="fas fa-save me-2"></i>Salvar SMTP
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="testSmtpConfig()">
+                                        <i class="fas fa-vials me-2"></i>Testar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-chart-pie me-2"></i>Estatísticas
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <div class="border-end">
+                                            <div class="fs-4 fw-bold text-primary" id="totalEmails">0</div>
+                                            <small class="text-muted">E-mails Enviados</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="fs-4 fw-bold text-success" id="emailSuccess">0%</div>
+                                        <small class="text-muted">Taxa de Sucesso</small>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="d-grid">
+                                    <button class="btn btn-outline-info" onclick="viewEmailLogs()">
+                                        <i class="fas fa-history me-2"></i>Ver Logs
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal: Configuração de E-mail -->
+        <div class="modal fade" id="emailConfigModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-envelope me-2"></i>Configuração de E-mail
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="emailConfigFormModal">
+                            <input type="hidden" id="configId">
+                            <div class="mb-3">
+                                <label class="form-label">Assunto do Formulário</label>
+                                <select class="form-select" id="configSubject" required>
+                                    <option value="">Selecione o assunto...</option>
+                                    <option value="saiba-mais">💡 Saiba mais sobre a plataforma</option>
+                                    <option value="suporte-tecnico">🛠️ Suporte técnico</option>
+                                    <option value="comercial">💼 Questões comerciais</option>
+                                    <option value="integracao">🔗 Ajuda com integração</option>
+                                    <option value="bug-report">🐛 Reportar problema</option>
+                                    <option value="outros">📋 Outros</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">E-mail de Destino</label>
+                                <input type="email" class="form-control" id="configEmail" placeholder="destino@empresa.com" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nome do Responsável</label>
+                                <input type="text" class="form-control" id="configResponsible" placeholder="Nome do responsável">
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="configActive" checked>
+                                <label class="form-check-label" for="configActive">
+                                    Configuração ativa
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-success" onclick="saveEmailConfig()">
+                            <i class="fas fa-save me-2"></i>Salvar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: Criar Admin -->
+    <div class="modal" id="createAdminModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Novo Administrador</h3>
+                <button class="modal-close" onclick="closeModal('createAdminModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="createAdminForm">
+                    <div class="form-group">
+                        <label class="form-label">Endereço da Wallet</label>
+                        <input type="text" class="form-control" id="adminAddress" placeholder="0x..." required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="adminName" placeholder="Nome do administrador" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Departamento</label>
+                        <input type="text" class="form-control" id="adminDepartment" placeholder="Departamento">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Usuário</label>
+                        <select class="form-control" id="adminUserType" required>
+                            <option value="Moderator">Moderator</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('createAdminModal')">Cancelar</button>
+                <button class="btn btn-primary" onclick="createAdmin()">Criar Admin</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- JavaScript Unificado -->
+    <script src="js/modules/web3.js"></script>
+    <script src="js/shared/api.js"></script>
+    <script src="js/shared/auth.js"></script>
+    <script src="js/xcafe-app.js"></script>
+
+    <script>
+        // ============================================================================
+        // ADMIN PANEL CONTROLLER
+        // ============================================================================
+        
+        class AdminPanel {
+            constructor() {
+                this.currentSection = 'dashboard';
+                this.init();
+            }
+
+            async init() {
+                // Verificar autenticação
+                if (!auth.requireAdmin()) {
+                    return;
+                }
+
+                this.setupEventListeners();
+                await this.loadInitialData();
+                this.updateUI();
+            }
+
+            setupEventListeners() {
+                // Toggle sidebar
+                document.getElementById('sidebarToggle').onclick = () => {
+                    document.getElementById('adminSidebar').classList.toggle('active');
+                    document.getElementById('adminContent').classList.toggle('sidebar-active');
+                };
+
+                // Navigation
+                document.querySelectorAll('[data-section]').forEach(link => {
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        this.showSection(link.dataset.section);
+                    };
+                });
+
+                // Auth status listener
+                window.addEventListener('authStatusChanged', () => {
+                    this.updateUserInfo();
+                });
+            }
+
+            showSection(sectionName) {
+                // Hide all sections
+                document.querySelectorAll('.admin-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+
+                // Show target section
+                const targetSection = document.getElementById(`section-${sectionName}`);
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                    this.currentSection = sectionName;
+                }
+
+                // Update navigation
+                document.querySelectorAll('.admin-nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+
+                // Load section data
+                this.loadSectionData(sectionName);
+            }
+
+            async loadInitialData() {
+                await this.loadDashboardStats();
+                this.updateUserInfo();
+            }
+
+            async loadSectionData(section) {
+                switch (section) {
+                    case 'dashboard':
+                        await this.loadDashboardStats();
+                        break;
+                    case 'admins':
+                        await this.loadAdmins();
+                        break;
+                    case 'widgets':
+                        await this.loadWidgets();
+                        break;
+                    case 'analytics':
+                        await this.loadAnalytics();
+                        break;
+                    case 'system':
+                        await this.loadSystemInfo();
+                        break;
+                    case 'chains':
+                        await this.loadChainsData();
+                        break;
+                }
+            }
+
+            async loadDashboardStats() {
+                try {
+                    const stats = await api.system.stats();
+                    
+                    document.getElementById('totalAdmins').textContent = stats.totalAdmins || 0;
+                    document.getElementById('totalWidgets').textContent = stats.totalWidgets || 0;
+                    document.getElementById('totalTransactions').textContent = stats.totalTransactions || 0;
+                    document.getElementById('systemUptime').textContent = stats.systemInitialized ? 'Online' : 'Inicializando';
+                    
+                } catch (error) {
+                    console.error('Erro ao carregar stats:', error);
+                }
+            }
+
+            async loadAdmins() {
+                try {
+                    const admins = await api.admin.list();
+                    this.renderAdminsTable(admins);
+                } catch (error) {
+                    console.error('Erro ao carregar admins:', error);
+                }
+            }
+
+            renderAdminsTable(admins) {
+                const tbody = document.getElementById('adminsTableBody');
+                
+                if (!admins || admins.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center">Nenhum administrador encontrado</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = admins.map(admin => `
+                    <tr>
+                        <td>
+                            <code>${utils.formatAddress(admin.address)}</code>
+                        </td>
+                        <td>${admin.name || 'N/A'}</td>
+                        <td>
+                            <span class="badge bg-primary">${admin.userType}</span>
+                        </td>
+                        <td>${admin.department || 'N/A'}</td>
+                        <td>
+                            <span class="badge ${admin.active ? 'bg-success' : 'bg-danger'}">
+                                ${admin.active ? 'Ativo' : 'Inativo'}
+                            </span>
+                        </td>
+                        <td>
+                            ${auth.isSuperAdmin() || admin.userType !== 'Super Admin' ? `
+                                <button class="btn btn-sm btn-outline-danger" onclick="confirmDeleteAdmin('${admin.address}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : ''}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            updateUserInfo() {
+                const userInfo = document.getElementById('userInfo');
+                if (auth.isAuthenticated()) {
+                    const user = auth.getUser();
+                    userInfo.innerHTML = `
+                        <div>${utils.formatAddress(user.address)}</div>
+                        <div class="text-warning">${user.userType}</div>
+                    `;
+                }
+            }
+
+            updateUI() {
+                // A função updateAuthUI do auth.js já cuida disso
+                authManager.updateAuthUI();
+            }
+
+            // ============================================================================
+            // CHAINS MANAGEMENT
+            // ============================================================================
+            
+            async loadChainsData() {
+                try {
+                    console.log('🔗 Carregando dados de chains...');
+                    
+                    // Importar chains utils dinamicamente
+                    const { fetchAllNetworks, getChainsStats, clearChainsCache } = await import('./js/shared/chains-utils.js');
+                    
+                    // Carregar redes e estatísticas
+                    const [networks, stats] = await Promise.all([
+                        fetchAllNetworks(),
+                        Promise.resolve(getChainsStats())
+                    ]);
+                    
+                    this.allNetworks = networks;
+                    this.filteredNetworks = networks;
+                    
+                    // Atualizar estatísticas
+                    this.updateChainsStats(networks, stats);
+                    
+                    // Renderizar tabela
+                    this.renderNetworksTable(networks);
+                    
+                    console.log(`✅ ${networks.length} redes carregadas`);
+                    
+                } catch (error) {
+                    console.error('❌ Erro ao carregar chains:', error);
+                    this.showChainsError(error.message);
+                }
+            }
+            
+            updateChainsStats(networks, stats) {
+                const supported = networks.filter(n => n.supported === true).length;
+                const testnets = networks.filter(n => this.isTestnet(n)).length;
+                const cacheStatus = stats.hasCache ? '✅' : '❌';
+                
+                document.getElementById('totalNetworks').textContent = networks.length;
+                document.getElementById('supportedNetworks').textContent = supported;
+                document.getElementById('testnetworks').textContent = testnets;
+                document.getElementById('cacheStatus').textContent = cacheStatus;
+                document.getElementById('networksCount').textContent = networks.length;
+                
+                // Cache info
+                if (stats.lastUpdate) {
+                    document.getElementById('lastUpdate').textContent = new Date(stats.lastUpdate).toLocaleString('pt-BR');
+                    document.getElementById('cachedNetworks').textContent = stats.networksCount;
+                    
+                    const nextUpdate = new Date(stats.lastUpdate.getTime() + (5 * 24 * 60 * 60 * 1000));
+                    document.getElementById('nextUpdate').textContent = nextUpdate.toLocaleString('pt-BR');
+                } else {
+                    document.getElementById('lastUpdate').textContent = 'Nunca';
+                    document.getElementById('cachedNetworks').textContent = '0';
+                    document.getElementById('nextUpdate').textContent = 'Próxima execução';
+                }
+            }
+            
+            renderNetworksTable(networks) {
+                const tbody = document.getElementById('networksTableBody');
+                
+                if (!networks || networks.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="text-center py-4">
+                                <i class="fas fa-exclamation-triangle text-warning fs-1 mb-3"></i>
+                                <p>Nenhuma rede encontrada</p>
+                                <button class="btn btn-primary" onclick="refreshChains()">
+                                    <i class="fas fa-sync-alt me-2"></i>Recarregar Redes
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                tbody.innerHTML = networks.map((network, index) => `
+                    <tr data-chain-id="${network.chainId}">
+                        <td>
+                            <input type="checkbox" class="form-check-input network-checkbox" 
+                                   value="${network.chainId}" onchange="updateSelectedCount()">
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="me-2">
+                                    ${network.icon ? `<img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${network.shortName}/info/logo.png" width="24" height="24" onerror="this.style.display='none'">` : '<i class="fas fa-link text-muted"></i>'}
+                                </div>
+                                <div>
+                                    <div class="fw-bold">${network.name}</div>
+                                    <div class="small text-muted">${network.shortName || network.chain || 'N/A'}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <code class="bg-light px-2 py-1 rounded">${network.chainId}</code>
+                        </td>
+                        <td>
+                            <span class="badge bg-primary">${network.nativeCurrency?.symbol || 'N/A'}</span>
+                        </td>
+                        <td>
+                            <span class="badge ${this.isTestnet(network) ? 'bg-warning' : 'bg-info'}">
+                                ${this.isTestnet(network) ? 'Testnet' : 'Mainnet'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge ${network.supported ? 'bg-success' : 'bg-secondary'}">
+                                ${network.supported ? '✅ Suportada' : '⚠️ Beta'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark">
+                                ${network.rpc?.length || 0} RPCs
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-info" onclick="showNetworkDetails(${network.chainId})" title="Detalhes">
+                                    <i class="fas fa-info"></i>
+                                </button>
+                                <button class="btn btn-outline-primary" onclick="testNetworkConnection(${network.chainId})" title="Testar">
+                                    <i class="fas fa-vials"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                // Atualizar contador
+                document.getElementById('networksCount').textContent = networks.length;
+            }
+            
+            isTestnet(network) {
+                const testnetKeywords = ['test', 'testnet', 'goerli', 'sepolia', 'mumbai', 'fuji', 'chapel'];
+                const name = network.name.toLowerCase();
+                return testnetKeywords.some(keyword => name.includes(keyword)) || 
+                       network.chainId > 1000 || 
+                       [97, 80001, 11155111, 43113, 4002].includes(network.chainId);
+            }
+            
+            showChainsError(message) {
+                const tbody = document.getElementById('networksTableBody');
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-4">
+                            <i class="fas fa-exclamation-circle text-danger fs-1 mb-3"></i>
+                            <p class="text-danger">Erro ao carregar redes: ${message}</p>
+                            <button class="btn btn-danger" onclick="refreshChains()">
+                                <i class="fas fa-sync-alt me-2"></i>Tentar Novamente
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // ============================================================================
+        // CHAINS GLOBAL FUNCTIONS
+        // ============================================================================
+
+        async function refreshChains() {
+            const btn = document.querySelector('button[onclick="refreshChains()"]');
+            const originalHtml = btn?.innerHTML || '';
+            
+            try {
+                if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Atualizando...';
+                
+                await adminPanel.loadChainsData();
+                
+                if (window.showToast) {
+                    window.showToast('🔗 Redes atualizadas com sucesso!', 'success');
+                }
+                
+            } catch (error) {
+                console.error('Erro ao atualizar chains:', error);
+                if (window.showToast) {
+                    window.showToast('❌ Erro ao atualizar redes', 'error');
+                }
+            } finally {
+                if (btn) btn.innerHTML = originalHtml;
+            }
+        }
+
+        async function forceUpdateChains() {
+            if (!confirm('Forçar atualização das redes do servidor?')) return;
+            
+            try {
+                const { autoUpdateChainsJson } = await import('./js/shared/chains-utils.js');
+                
+                // Limpar cache para forçar atualização
+                localStorage.removeItem('widget_saas_chains_cache');
+                localStorage.removeItem('widget_saas_chains_lastupdate');
+                
+                await autoUpdateChainsJson();
+                await adminPanel.loadChainsData();
+                
+                if (window.showToast) {
+                    window.showToast('🔄 Atualização forçada concluída!', 'success');
+                }
+                
+            } catch (error) {
+                console.error('Erro na atualização forçada:', error);
+                alert('Erro: ' + error.message);
+            }
+        }
+
+        async function clearChainsCache() {
+            if (!confirm('Limpar cache das redes? Isso forçará uma nova busca.')) return;
+            
+            try {
+                const { clearChainsCache } = await import('./js/shared/chains-utils.js');
+                
+                clearChainsCache();
+                await adminPanel.loadChainsData();
+                
+                if (window.showToast) {
+                    window.showToast('🗑️ Cache limpo com sucesso!', 'info');
+                }
+                
+            } catch (error) {
+                console.error('Erro ao limpar cache:', error);
+                alert('Erro: ' + error.message);
+            }
+        }
+
+        function filterNetworks() {
+            const search = document.getElementById('networksSearch').value.toLowerCase();
+            const filter = document.getElementById('networkFilter').value;
+            
+            if (!adminPanel.allNetworks) return;
+            
+            let filtered = adminPanel.allNetworks;
+            
+            // Aplicar filtro de busca
+            if (search) {
+                filtered = filtered.filter(network => 
+                    network.name.toLowerCase().includes(search) ||
+                    network.shortName?.toLowerCase().includes(search) ||
+                    network.chain?.toLowerCase().includes(search) ||
+                    network.chainId.toString().includes(search) ||
+                    network.nativeCurrency?.symbol.toLowerCase().includes(search)
+                );
+            }
+            
+            // Aplicar filtro de tipo
+            if (filter) {
+                switch (filter) {
+                    case 'supported':
+                        filtered = filtered.filter(n => n.supported === true);
+                        break;
+                    case 'mainnet':
+                        filtered = filtered.filter(n => !adminPanel.isTestnet(n));
+                        break;
+                    case 'testnet':
+                        filtered = filtered.filter(n => adminPanel.isTestnet(n));
+                        break;
+                }
+            }
+            
+            adminPanel.filteredNetworks = filtered;
+            adminPanel.renderNetworksTable(filtered);
+        }
+
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.network-checkbox');
+            
+            checkboxes.forEach(cb => {
+                cb.checked = selectAll.checked;
+            });
+            
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const selected = document.querySelectorAll('.network-checkbox:checked');
+            const count = selected.length;
+            
+            document.getElementById('selectedCount').textContent = count;
+            
+            // Habilitar/desabilitar botões
+            const enableBtn = document.getElementById('enableBtn');
+            const disableBtn = document.getElementById('disableBtn');
+            const removeBtn = document.getElementById('removeBtn');
+            
+            const hasSelection = count > 0;
+            enableBtn.disabled = !hasSelection;
+            disableBtn.disabled = !hasSelection;
+            removeBtn.disabled = !hasSelection;
+        }
+
+        async function showNetworkDetails(chainId) {
+            const network = adminPanel.allNetworks.find(n => n.chainId === chainId);
+            if (!network) return;
+            
+            const modalBody = document.getElementById('networkModalBody');
+            modalBody.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Informações Básicas</h6>
+                        <table class="table table-sm">
+                            <tr><td><strong>Nome:</strong></td><td>${network.name}</td></tr>
+                            <tr><td><strong>Chain ID:</strong></td><td><code>${network.chainId}</code></td></tr>
+                            <tr><td><strong>Símbolo:</strong></td><td>${network.nativeCurrency?.symbol || 'N/A'}</td></tr>
+                            <tr><td><strong>Decimais:</strong></td><td>${network.nativeCurrency?.decimals || 18}</td></tr>
+                            <tr><td><strong>Tipo:</strong></td><td>${adminPanel.isTestnet(network) ? 'Testnet' : 'Mainnet'}</td></tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>URLs</h6>
+                        <div class="mb-3">
+                            <strong>RPCs (${network.rpc?.length || 0}):</strong>
+                            ${network.rpc?.map(rpc => `
+                                <div class="small bg-light p-2 rounded mt-1">
+                                    <code>${rpc}</code>
+                                    <button class="btn btn-sm btn-outline-secondary ms-2" onclick="testRpcUrl('${rpc}')" title="Testar">
+                                        <i class="fas fa-vials"></i>
+                                    </button>
+                                </div>
+                            `).join('') || '<p class="text-muted">Nenhum RPC disponível</p>'}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Explorers:</strong>
+                            ${network.explorers?.map(explorer => `
+                                <div class="small bg-light p-2 rounded mt-1">
+                                    <a href="${explorer.url}" target="_blank" class="text-decoration-none">
+                                        ${explorer.name} <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                </div>
+                            `).join('') || '<p class="text-muted">Nenhum explorer disponível</p>'}
+                        </div>
+                    </div>
+                </div>
+                
+                ${network.faucets?.length > 0 ? `
+                    <div class="mt-3">
+                        <h6>Faucets (${network.faucets.length})</h6>
+                        ${network.faucets.map(faucet => `
+                            <div class="small bg-info bg-opacity-10 p-2 rounded mt-1">
+                                <a href="${faucet}" target="_blank" class="text-decoration-none">
+                                    ${faucet} <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+            `;
+            
+            // Mostrar modal
+            const modal = new bootstrap.Modal(document.getElementById('networkModal'));
+            modal.show();
+        }
+
+        async function testRpcUrl(rpcUrl) {
+            try {
+                console.log('🧪 Testando RPC:', rpcUrl);
+                
+                const startTime = Date.now();
+                const response = await fetch(rpcUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        jsonrpc: '2.0',
+                        method: 'eth_blockNumber',
+                        params: [],
+                        id: 1
+                    })
+                });
+                
+                const endTime = Date.now();
+                const latency = endTime - startTime;
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.result) {
+                        alert(`✅ RPC funcionando!\n\nLatência: ${latency}ms\nÚltimo bloco: ${parseInt(data.result, 16)}`);
+                    } else {
+                        alert(`⚠️ RPC respondeu mas sem dados válidos\n\nResposta: ${JSON.stringify(data)}`);
+                    }
+                } else {
+                    alert(`❌ RPC não respondeu\n\nStatus: ${response.status}\nLatência: ${latency}ms`);
+                }
+                
+            } catch (error) {
+                console.error('Erro no teste de RPC:', error);
+                alert(`❌ Erro ao testar RPC:\n\n${error.message}`);
+            }
+        }
+
+        async function testNetworkConnection(chainId) {
+            const network = adminPanel.allNetworks.find(n => n.chainId === chainId);
+            if (!network || !network.rpc || network.rpc.length === 0) {
+                alert('Rede sem RPCs para testar');
+                return;
+            }
+            
+            const btn = event.target.closest('button');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            try {
+                const results = await Promise.allSettled(
+                    network.rpc.slice(0, 3).map(async rpc => {
+                        const startTime = Date.now();
+                        const response = await fetch(rpc, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                jsonrpc: '2.0',
+                                method: 'eth_blockNumber',
+                                params: [],
+                                id: 1
+                            })
+                        });
+                        const latency = Date.now() - startTime;
+                        const data = await response.json();
+                        return { rpc, latency, blockNumber: data.result, ok: true };
+                    })
+                );
+                
+                const working = results.filter(r => r.status === 'fulfilled' && r.value.ok);
+                const total = results.length;
+                
+                if (working.length > 0) {
+                    const best = working.reduce((a, b) => a.value.latency < b.value.latency ? a : b);
+                    alert(`✅ Rede ${network.name} funcionando!\n\n${working.length}/${total} RPCs OK\nMelhor latência: ${best.value.latency}ms\nÚltimo bloco: ${parseInt(best.value.blockNumber, 16)}`);
+                } else {
+                    alert(`❌ Rede ${network.name} com problemas\n\n0/${total} RPCs funcionando`);
+                }
+                
+            } catch (error) {
+                alert(`❌ Erro no teste: ${error.message}`);
+            } finally {
+                btn.innerHTML = originalHtml;
+            }
+        }
+
+        async function exportNetworks() {
+            try {
+                const networks = adminPanel.filteredNetworks || adminPanel.allNetworks || [];
+                const data = JSON.stringify(networks, null, 2);
+                
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `widget-saas-networks-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                URL.revokeObjectURL(url);
+                
+                if (window.showToast) {
+                    window.showToast('📥 Redes exportadas com sucesso!', 'success');
+                }
+                
+            } catch (error) {
+                alert('Erro ao exportar: ' + error.message);
+            }
+        }
+
+        function enableSelectedNetworks() {
+            const selected = document.querySelectorAll('.network-checkbox:checked');
+            // TODO: Implementar habilitação de redes selecionadas
+            alert(`Função em desenvolvimento: habilitar ${selected.length} redes`);
+        }
+
+        function disableSelectedNetworks() {
+            const selected = document.querySelectorAll('.network-checkbox:checked');
+            // TODO: Implementar desabilitação de redes selecionadas  
+            alert(`Função em desenvolvimento: desabilitar ${selected.length} redes`);
+        }
+
+        function removeSelectedNetworks() {
+            const selected = document.querySelectorAll('.network-checkbox:checked');
+            if (!confirm(`Remover ${selected.length} redes selecionadas?`)) return;
+            
+            // TODO: Implementar remoção de redes selecionadas
+            alert(`Função em desenvolvimento: remover ${selected.length} redes`);
+        }
+
+        // ============================================================================
+        // GLOBAL FUNCTIONS (EXISTING)
+        // ============================================================================
+
+        let adminPanel;
+
+        async function loadSystemStats() {
+            await adminPanel.loadDashboardStats();
+            adminPanel.showNotification('Stats atualizadas!', 'success');
+        }
+
+        async function checkHealth() {
+            try {
+                const health = await api.system.health();
+                adminPanel.showNotification(`Sistema ${health.status}: ${health.service}`, 'info');
+            } catch (error) {
+                adminPanel.showNotification('Erro ao verificar health', 'danger');
+            }
+        }
+
+        function showCreateAdminModal() {
+            document.getElementById('createAdminModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        async function createAdmin() {
+            const form = document.getElementById('createAdminForm');
+            const formData = new FormData(form);
+            
+            const adminData = {
+                address: document.getElementById('adminAddress').value,
+                name: document.getElementById('adminName').value,
+                department: document.getElementById('adminDepartment').value,
+                userType: document.getElementById('adminUserType').value
+            };
+
+            // Validar dados
+            const errors = utils.validateRequired({
+                'Endereço': adminData.address,
+                'Nome': adminData.name,
+                'Tipo': adminData.userType
+            });
+
+            if (errors.length > 0) {
+                alert('Erros:\n' + errors.join('\n'));
+                return;
+            }
+
+            if (!utils.validateWallet(adminData.address)) {
+                alert('Endereço de wallet inválido');
+                return;
+            }
+
+            try {
+                const result = await api.admin.create(adminData);
+                
+                if (result.success) {
+                    closeModal('createAdminModal');
+                    form.reset();
+                    await adminPanel.loadAdmins();
+                    adminPanel.showNotification('Admin criado com sucesso!', 'success');
+                } else {
+                    alert('Erro: ' + result.error);
+                }
+            } catch (error) {
+                alert('Erro ao criar admin: ' + error.message);
+            }
+        }
+
+        async function confirmDeleteAdmin(address) {
+            if (confirm(`Tem certeza que deseja remover o admin ${utils.formatAddress(address)}?`)) {
+                try {
+                    await api.admin.delete(address);
+                    await adminPanel.loadAdmins();
+                    adminPanel.showNotification('Admin removido!', 'success');
+                } catch (error) {
+                    alert('Erro ao remover admin: ' + error.message);
+                }
+            }
+        }
+
+        async function confirmSystemReset() {
+            const confirm1 = confirm('⚠️ ATENÇÃO: Esta ação irá resetar COMPLETAMENTE o sistema!');
+            if (!confirm1) return;
+            
+            const confirm2 = confirm('🚨 ÚLTIMA CHANCE: Todos os dados serão perdidos. Continuar?');
+            if (!confirm2) return;
+
+            try {
+                await api.system.reset();
+                alert('Sistema resetado! Redirecionando...');
+                window.location.href = '/auth.html';
+            } catch (error) {
+                alert('Erro ao resetar sistema: ' + error.message);
+            }
+        }
+
+        // ============================================================================
+        // INITIALIZATION
+        // ============================================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            adminPanel = new AdminPanel();
+        });
+
+        // CSS adicional para as seções
+        const style = document.createElement('style');
+        style.textContent = `
+            .admin-section {
+                display: none;
+                animation: fadeIn 0.3s ease-in;
+            }
+            
+            .admin-section.active {
+                display: block;
+            }
+            
+            .stat-card:hover {
+                transform: translateY(-2px);
+                transition: transform 0.2s;
+            }
+            
+            @media (max-width: 768px) {
+                .admin-sidebar {
+                    transform: translateX(-100%);
+                }
+                
+                .admin-sidebar.active {
+                    transform: translateX(0);
+                }
+                
+                .admin-content {
+                    margin-left: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

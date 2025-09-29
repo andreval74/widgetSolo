@@ -1,0 +1,85 @@
+{
+  "network_config": {
+    "testnet": {
+      "name": "BSC Testnet",
+      "chain_id": 97,
+      "rpc_url": "https://data-seed-prebsc-1-s1.binance.org:8545/",
+      "explorer": "https://testnet.bscscan.com",
+      "native_token": {
+        "symbol": "tBNB",
+        "decimals": 18,
+        "name": "Test BNB"
+      }
+    },
+    "mainnet": {
+      "name": "BSC Mainnet",
+      "chain_id": 56,
+      "rpc_url": "https://bsc-dataseed1.binance.org/",
+      "explorer": "https://bscscan.com",
+      "native_token": {
+        "symbol": "BNB",
+        "decimals": 18,
+        "name": "Binance Coin"
+      }
+    }
+  },
+  "supported_tokens": {
+    "testnet": {
+      "USDT": {
+        "address": "0x337610d27c682E347C9cD60BD4b3b107C9d34dDd",
+        "decimals": 18,
+        "name": "Tether USD (Testnet)",
+        "symbol": "USDT"
+      },
+      "tBNB": {
+        "address": "0x0000000000000000000000000000000000000000",
+        "decimals": 18,
+        "name": "Test BNB",
+        "symbol": "tBNB"
+      }
+    },
+    "mainnet": {
+      "USDT": {
+        "address": "0x55d398326f99059fF775485246999027B3197955",
+        "decimals": 18,
+        "name": "Tether USD",
+        "symbol": "USDT"
+      },
+      "BNB": {
+        "address": "0x0000000000000000000000000000000000000000",
+        "decimals": 18,
+        "name": "Binance Coin",
+        "symbol": "BNB"
+      }
+    }
+  },
+  "contract_defaults": {
+    "token_name": "XCafe Token",
+    "token_symbol": "XCAFE",
+    "token_decimals": 18,
+    "initial_supply": 1000000,
+    "max_supply": 10000000,
+    "price_in_usdt": "0.1",
+    "price_in_bnb": "0.0001",
+    "sale_enabled": true,
+    "max_per_transaction": 10000,
+    "min_per_transaction": 1
+  },
+  "platform_config": {
+    "current_network": "testnet",
+    "fee_percentage": 2.5,
+    "min_fee_usdt": "1.0",
+    "admin_wallet": "0x0000000000000000000000000000000000000000",
+    "api_base_url": "http://localhost:3000",
+    "widget_base_url": "http://localhost:3000"
+  },
+  "security": {
+    "require_wallet_verification": true,
+    "max_contracts_per_wallet": 10,
+    "enable_whitelist": true,
+    "admin_addresses": [
+      "0x0b81337F18767565D2eA40913799317A25DC4bc5",
+      "0xc9D6692C29e015308c9D509f0733Cd41A328B6D8"
+    ]
+  }
+}

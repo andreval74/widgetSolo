@@ -1,0 +1,106 @@
+<!-- Faturamento Page -->
+<div class="billing-section">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>💰 Faturamento</h2>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary" onclick="refreshBilling()">
+                <i class="fas fa-sync-alt"></i> Atualizar
+            </button>
+            <button class="btn btn-success" onclick="exportBilling()">
+                <i class="fas fa-download"></i> Exportar
+            </button>
+        </div>
+    </div>
+
+    <!-- Cards de Resumo -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line stat-icon text-success mb-2"></i>
+                    <h3 id="monthly-revenue" class="stat-number">R$ 0,00</h3>
+                    <p class="stat-label">Receita Este Mês</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-percent stat-icon text-primary mb-2"></i>
+                    <h3 id="commission-earned" class="stat-number">R$ 0,00</h3>
+                    <p class="stat-label">Comissões Ganhas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-shopping-cart stat-icon text-info mb-2"></i>
+                    <h3 id="total-transactions" class="stat-number">0</h3>
+                    <p class="stat-label">Transações</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-users stat-icon text-warning mb-2"></i>
+                    <h3 id="unique-buyers" class="stat-number">0</h3>
+                    <p class="stat-label">Compradores Únicos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status de Desenvolvimento -->
+    <div class="alert alert-info">
+        <i class="fas fa-construction me-2"></i>
+        <strong>Em Desenvolvimento:</strong> Sistema de faturamento detalhado com relatórios de vendas, 
+        comissões ganhas e histórico de transações está sendo implementado.
+    </div>
+
+    <!-- Resumo de Contratos -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Resumo por Contrato</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Contrato</th>
+                            <th>Vendas</th>
+                            <th>Volume Total</th>
+                            <th>Comissão</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contracts-billing">
+                        <tr>
+                            <td colspan="5" class="text-center py-3">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <div class="mt-2">Carregando dados de faturamento...</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico de Receita -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Evolução da Receita</h5>
+        </div>
+        <div class="card-body">
+            <div id="revenue-chart">
+                <div class="text-center py-5">
+                    <i class="fas fa-chart-area fa-3x text-muted"></i>
+                    <p class="mt-3 text-muted">Gráfico de receita será exibido aqui</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

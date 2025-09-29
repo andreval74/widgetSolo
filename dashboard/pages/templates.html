@@ -1,0 +1,498 @@
+<!-- Templates Page -->
+<div class="templates-section">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Templates de Widget</h2>
+        <button class="btn btn-success" onclick="createCustomTemplate()">
+            <i class="fas fa-plus"></i> Criar Template
+        </button>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Categoria</label>
+                    <select class="form-select" id="category-filter">
+                        <option value="">Todas as Categorias</option>
+                        <option value="payment">Pagamento</option>
+                        <option value="donation">Doação</option>
+                        <option value="subscription">Assinatura</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Ordenar por</label>
+                    <select class="form-select" id="sort-filter">
+                        <option value="popular">Mais Populares</option>
+                        <option value="recent">Mais Recentes</option>
+                        <option value="name">Nome A-Z</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Buscar Template</label>
+                    <input type="text" class="form-control" id="search-templates" placeholder="Nome do template...">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid de Templates -->
+    <div class="row g-4" id="templates-grid">
+        <!-- Template: Pagamento Simples -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 template-card" data-category="payment">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">Pagamento Simples</h6>
+                        <span class="badge bg-light text-primary">Popular</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Template básico para pagamentos únicos. Ideal para vendas de produtos ou serviços.</p>
+                    
+                    <!-- Preview -->
+                    <div class="template-preview border rounded p-3 mb-3">
+                        <div class="text-center">
+                            <i class="fas fa-credit-card fa-2x text-primary mb-2"></i>
+                            <h6>Pagar com Crypto</h6>
+                            <p class="small text-muted">0.05 ETH</p>
+                            <button class="btn btn-primary btn-sm">Pagar Agora</button>
+                        </div>
+                    </div>
+
+                    <!-- Características -->
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-check text-success me-2"></i>Configuração rápida</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Design responsivo</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Multi-moedas</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-primary btn-sm flex-fill" onclick="previewTemplate('payment-simple')">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                        <button class="btn btn-primary btn-sm flex-fill" onclick="useTemplate('payment-simple')">
+                            <i class="fas fa-magic"></i> Usar Template
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template: Doação -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 template-card" data-category="donation">
+                <div class="card-header bg-success text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">Doação Solidária</h6>
+                        <span class="badge bg-light text-success">Novo</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Template para campanhas de doação com metas e progresso visual.</p>
+                    
+                    <div class="template-preview border rounded p-3 mb-3">
+                        <div class="text-center">
+                            <i class="fas fa-heart fa-2x text-success mb-2"></i>
+                            <h6>Ajude uma Causa</h6>
+                            <div class="progress mb-2" style="height: 8px;">
+                                <div class="progress-bar bg-success" style="width: 65%"></div>
+                            </div>
+                            <p class="small text-muted">R$ 650 de R$ 1.000</p>
+                            <button class="btn btn-success btn-sm">Doar Agora</button>
+                        </div>
+                    </div>
+
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-check text-success me-2"></i>Barra de progresso</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Meta configurável</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Valores sugeridos</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-success btn-sm flex-fill" onclick="previewTemplate('donation')">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                        <button class="btn btn-success btn-sm flex-fill" onclick="useTemplate('donation')">
+                            <i class="fas fa-magic"></i> Usar Template
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template: Assinatura -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 template-card" data-category="subscription">
+                <div class="card-header bg-warning text-dark">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">Assinatura Premium</h6>
+                        <span class="badge bg-dark text-warning">Pro</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Template para assinaturas recorrentes com diferentes planos.</p>
+                    
+                    <div class="template-preview border rounded p-3 mb-3">
+                        <div class="text-center">
+                            <i class="fas fa-crown fa-2x text-warning mb-2"></i>
+                            <h6>Plano Premium</h6>
+                            <p class="small text-muted">0.1 ETH/mês</p>
+                            <div class="small mb-2">
+                                ✓ Acesso completo<br>
+                                ✓ Suporte prioritário
+                            </div>
+                            <button class="btn btn-warning btn-sm">Assinar</button>
+                        </div>
+                    </div>
+
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-check text-success me-2"></i>Múltiplos planos</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Pagamento recorrente</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Cancelamento fácil</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-warning btn-sm flex-fill" onclick="previewTemplate('subscription')">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                        <button class="btn btn-warning btn-sm flex-fill" onclick="useTemplate('subscription')">
+                            <i class="fas fa-magic"></i> Usar Template
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template: E-commerce -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 template-card" data-category="payment">
+                <div class="card-header bg-info text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">Loja Online</h6>
+                        <span class="badge bg-light text-info">Avançado</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Template completo para e-commerce com carrinho e produtos.</p>
+                    
+                    <div class="template-preview border rounded p-3 mb-3">
+                        <div class="text-center">
+                            <i class="fas fa-shopping-cart fa-2x text-info mb-2"></i>
+                            <h6>Minha Loja</h6>
+                            <div class="small mb-2">
+                                2 itens no carrinho<br>
+                                Total: 0.15 ETH
+                            </div>
+                            <button class="btn btn-info btn-sm">Finalizar Compra</button>
+                        </div>
+                    </div>
+
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-check text-success me-2"></i>Carrinho de compras</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Catálogo de produtos</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Checkout integrado</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-info btn-sm flex-fill" onclick="previewTemplate('ecommerce')">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                        <button class="btn btn-info btn-sm flex-fill" onclick="useTemplate('ecommerce')">
+                            <i class="fas fa-magic"></i> Usar Template
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template: NFT -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 template-card" data-category="custom">
+                <div class="card-header bg-secondary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">NFT Marketplace</h6>
+                        <span class="badge bg-light text-secondary">Trending</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Template especializado para venda e leilão de NFTs.</p>
+                    
+                    <div class="template-preview border rounded p-3 mb-3">
+                        <div class="text-center">
+                            <i class="fas fa-image fa-2x text-secondary mb-2"></i>
+                            <h6>Meu NFT #001</h6>
+                            <p class="small text-muted">Preço atual: 2.5 ETH</p>
+                            <div class="d-flex gap-1 justify-content-center">
+                                <button class="btn btn-outline-secondary btn-sm">Apostar</button>
+                                <button class="btn btn-secondary btn-sm">Comprar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-check text-success me-2"></i>Leilão automático</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Verificação de autenticidade</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Histórico de proprietários</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-secondary btn-sm flex-fill" onclick="previewTemplate('nft')">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                        <button class="btn btn-secondary btn-sm flex-fill" onclick="useTemplate('nft')">
+                            <i class="fas fa-magic"></i> Usar Template
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template: Minimalista -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 template-card" data-category="custom">
+                <div class="card-header bg-dark text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">Design Minimalista</h6>
+                        <span class="badge bg-light text-dark">Clean</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Template clean e minimalista para foco total no pagamento.</p>
+                    
+                    <div class="template-preview border rounded p-3 mb-3 bg-light">
+                        <div class="text-center">
+                            <div style="width: 40px; height: 40px; background: #333; border-radius: 50%; margin: 0 auto 10px;"></div>
+                            <h6 class="text-dark">Pagar</h6>
+                            <p class="small text-muted">0.02 ETH</p>
+                            <button class="btn btn-dark btn-sm">Confirmar</button>
+                        </div>
+                    </div>
+
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-check text-success me-2"></i>Design limpo</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Carregamento rápido</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Alta conversão</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-dark btn-sm flex-fill" onclick="previewTemplate('minimal')">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                        <button class="btn btn-dark btn-sm flex-fill" onclick="useTemplate('minimal')">
+                            <i class="fas fa-magic"></i> Usar Template
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estado vazio -->
+    <div id="no-templates" class="text-center py-5" style="display: none;">
+        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+        <h4>Nenhum template encontrado</h4>
+        <p class="text-muted">Tente ajustar os filtros ou criar um template personalizado.</p>
+        <button class="btn btn-primary" onclick="clearFilters()">
+            Limpar Filtros
+        </button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    setupTemplateFilters();
+});
+
+function setupTemplateFilters() {
+    // Event listeners para filtros
+    document.getElementById('category-filter').addEventListener('change', filterTemplates);
+    document.getElementById('sort-filter').addEventListener('change', filterTemplates);
+    document.getElementById('search-templates').addEventListener('input', filterTemplates);
+}
+
+function filterTemplates() {
+    const category = document.getElementById('category-filter').value;
+    const search = document.getElementById('search-templates').value.toLowerCase();
+    const sort = document.getElementById('sort-filter').value;
+    
+    const templates = document.querySelectorAll('.template-card');
+    let visibleCount = 0;
+    
+    templates.forEach(template => {
+        const templateCategory = template.getAttribute('data-category');
+        const templateName = template.querySelector('.card-header h6').textContent.toLowerCase();
+        
+        const categoryMatch = !category || templateCategory === category;
+        const searchMatch = !search || templateName.includes(search);
+        
+        if (categoryMatch && searchMatch) {
+            template.parentElement.style.display = 'block';
+            visibleCount++;
+        } else {
+            template.parentElement.style.display = 'none';
+        }
+    });
+    
+    // Mostrar/esconder estado vazio
+    const noTemplates = document.getElementById('no-templates');
+    const grid = document.getElementById('templates-grid');
+    
+    if (visibleCount === 0) {
+        grid.style.display = 'none';
+        noTemplates.style.display = 'block';
+    } else {
+        grid.style.display = 'flex';
+        noTemplates.style.display = 'none';
+    }
+}
+
+function clearFilters() {
+    document.getElementById('category-filter').value = '';
+    document.getElementById('search-templates').value = '';
+    document.getElementById('sort-filter').value = 'popular';
+    filterTemplates();
+}
+
+function previewTemplate(templateId) {
+    const templates = {
+        'payment-simple': {
+            name: 'Pagamento Simples',
+            color: '#007bff',
+            content: `
+                <div style="text-align: center; padding: 20px; border: 2px solid #007bff; border-radius: 10px;">
+                    <i class="fas fa-credit-card" style="font-size: 48px; color: #007bff; margin-bottom: 15px;"></i>
+                    <h3 style="color: #007bff;">Pagamento Seguro</h3>
+                    <p>Valor: 0.05 ETH</p>
+                    <button style="background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 5px; font-size: 16px;">
+                        💳 Pagar com Crypto
+                    </button>
+                </div>
+            `
+        },
+        'donation': {
+            name: 'Doação Solidária',
+            color: '#28a745',
+            content: `
+                <div style="text-align: center; padding: 20px; border: 2px solid #28a745; border-radius: 10px;">
+                    <i class="fas fa-heart" style="font-size: 48px; color: #28a745; margin-bottom: 15px;"></i>
+                    <h3 style="color: #28a745;">Ajude Nossa Causa</h3>
+                    <div style="background: #e9ecef; border-radius: 10px; height: 10px; margin: 15px 0;">
+                        <div style="background: #28a745; height: 100%; width: 65%; border-radius: 10px;"></div>
+                    </div>
+                    <p>R$ 650 arrecadados de R$ 1.000</p>
+                    <button style="background: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 5px; font-size: 16px;">
+                        ❤️ Fazer Doação
+                    </button>
+                </div>
+            `
+        }
+    };
+
+    const template = templates[templateId];
+    if (!template) return;
+
+    const previewWindow = window.open('', 'template-preview', 'width=500,height=700');
+    previewWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Preview - ${template.name}</title>
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+            <style>
+                body { 
+                    font-family: Arial, sans-serif; 
+                    padding: 20px; 
+                    background: #f8f9fa; 
+                    margin: 0;
+                }
+                .preview-container {
+                    background: white;
+                    padding: 30px;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    margin-bottom: 20px;
+                }
+                .close-btn {
+                    background: #6c757d;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    display: block;
+                    margin: 0 auto;
+                }
+            </style>
+        </head>
+        <body>
+            <h2 style="text-align: center; margin-bottom: 30px;">Preview: ${template.name}</h2>
+            <div class="preview-container">
+                ${template.content}
+            </div>
+            <button class="close-btn" onclick="window.close()">Fechar Preview</button>
+        </body>
+        </html>
+    `);
+}
+
+function useTemplate(templateId) {
+    if (typeof window.dashboardManager !== 'undefined') {
+        // Pré-preencher formulário com dados do template
+        window.dashboardManager.showSection('new-contract');
+        
+        setTimeout(() => {
+            const templates = {
+                'payment-simple': {
+                    name: 'Pagamento Simples',
+                    type: 'payment',
+                    price: '0.05',
+                    color: '#007bff'
+                },
+                'donation': {
+                    name: 'Campanha de Doação',
+                    type: 'donation',
+                    price: '0.01',
+                    color: '#28a745'
+                },
+                'subscription': {
+                    name: 'Plano Premium',
+                    type: 'subscription',
+                    price: '0.1',
+                    color: '#ffc107'
+                }
+            };
+
+            const template = templates[templateId];
+            if (template) {
+                document.getElementById('contract-name').value = template.name;
+                document.getElementById('widget-type').value = template.type;
+                document.getElementById('widget-price').value = template.price;
+                document.getElementById('widget-color').value = template.color;
+                
+                // Trigger preview update
+                if (typeof updatePreview === 'function') {
+                    updatePreview();
+                }
+            }
+        }, 500);
+        
+        if (typeof window.showToast === 'function') {
+            window.showToast('Template aplicado! Configure os detalhes.', 'success');
+        }
+    }
+}
+
+function createCustomTemplate() {
+    if (typeof window.showToast === 'function') {
+        window.showToast('Criação de templates personalizados em desenvolvimento', 'info');
+    }
+}
+</script>

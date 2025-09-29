@@ -1,0 +1,158 @@
+<!-- 
+================================================================================
+DASHBOARD MENU - WIDGET SAAS
+================================================================================
+Menu lateral condensado com navegação retrátil
+================================================================================
+-->
+<nav class="sidebar">
+    <!-- Cabeçalho do Dashboard -->
+    <div class="d-flex align-items-center" style="margin:10px;">
+        <i class="fas fa-cube me-2 text-white fs-3"></i>
+        <div class="d-flex flex-column">
+            <a href="../dashboard.html" title="Home"><span class="fw-bold text-white fs-4 widget-saas-text">Widget
+                    SaaS</span></a>
+            <small class="text-muted" style="line-height: 1; margin-top: -2px;">Plataforma Web3</small>
+        </div>
+    </div>
+
+    <!-- Informações da Carteira (condensado) -->
+    <div id="wallet-info-display">
+        <code class="badge bg-warning d-block text-center py-1 text-dark" id="connected-wallet-address"
+            title="Clique para copiar">
+                    Conectando...
+                </code>
+    </div>
+
+    <!-- Menu de Navegação -->
+    <div class="sidebar-body">
+        <ul class="nav flex-column">
+            <!-- Overview (Dashboard Principal) -->
+            <li class="nav-item">
+                <a class="menu-item nav-link" href="#" data-section="overview"
+                    onclick="window.navigateToSection('overview'); return false;">
+                    <i class="fas fa-tachometer-alt me-2"></i>
+                    Overview
+                </a>
+            </li>
+
+            <!-- Seção de Widgets (Retrátil) -->
+            <li class="nav-item">
+                <a class="menu-item nav-link collapsed" data-bs-toggle="collapse" href="#widgetsMenu" role="button"
+                    aria-expanded="false">
+                    <i class="fas fa-puzzle-piece me-2"></i>
+                    Meus Widgets
+                    <i class="fas fa-chevron-down ms-auto menu-arrow"></i>
+                </a>
+                <div class="collapse" id="widgetsMenu">
+                    <div class="nav-submenu">
+                        <a class="menu-item nav-link nav-sublink" href="#" data-section="new-widget"
+                            onclick="window.navigateToSection('new-widget'); return false;">
+                            <i class="fas fa-plus me-2"></i>Criar Widget
+                        </a>
+                        <a class="menu-item nav-link nav-sublink" href="#" data-section="widgets"
+                            onclick="window.navigateToSection('widgets'); return false;">
+                            <i class="fas fa-list me-2"></i>Gerenciar Widgets
+                        </a>
+                        <a class="menu-item nav-link nav-sublink" href="#" data-section="templates"
+                            onclick="window.navigateToSection('templates'); return false;">
+                            <i class="fas fa-copy me-2"></i>Templates
+                        </a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Seção de Vendas (Retrátil) -->
+            <li class="nav-item">
+                <a class="menu-item nav-link collapsed" data-bs-toggle="collapse" href="#salesMenu" role="button"
+                    aria-expanded="false">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Vendas & Analytics
+                    <i class="fas fa-chevron-down ms-auto menu-arrow"></i>
+                </a>
+                <div class="collapse" id="salesMenu">
+                    <div class="nav-submenu">
+                        <a class="menu-item nav-link nav-sublink" href="#" data-section="transactions"
+                            onclick="window.navigateToSection('transactions'); return false;">
+                            <i class="fas fa-exchange-alt me-2"></i>Transações
+                        </a>
+                        <a class="menu-item nav-link nav-sublink" href="#" data-section="earnings"
+                            onclick="window.navigateToSection('earnings'); return false;">
+                            <i class="fas fa-dollar-sign me-2"></i>Meus Ganhos
+                        </a>
+                        <a class="menu-item nav-link nav-sublink" href="#" data-section="reports"
+                            onclick="window.navigateToSection('reports'); return false;">
+                            <i class="fas fa-chart-bar me-2"></i>Relatórios
+                        </a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Seção Financeiro (Retrátil) -->
+            <li class="nav-item">
+                <a class="menu-item nav-link collapsed" data-bs-toggle="collapse" href="#financialMenu" role="button"
+                    aria-expanded="false">
+                    <i class="fas fa-wallet me-2"></i>
+                    Financeiro
+                    <i class="fas fa-chevron-down ms-auto menu-arrow"></i>
+                </a>
+                <div class="collapse" id="financialMenu">
+                    <div class="nav-submenu">
+                        <a class="menu-item nav-link nav-sublink" href="#" data-section="credits"
+                            onclick="window.navigateToSection('credits'); return false;">
+                            <i class="fas fa-coins me-2"></i>Meus Créditos
+                        </a>
+                        <a class="menu-item nav-link nav-sublink" href="#" data-section="buy-credits"
+                            onclick="window.navigateToSection('buy-credits'); return false;">
+                            <i class="fas fa-shopping-cart me-2"></i>Comprar Créditos
+                        </a>
+                        <a class="menu-item nav-link nav-sublink" href="#" data-section="billing"
+                            onclick="window.navigateToSection('billing'); return false;">
+                            <i class="fas fa-receipt me-2"></i>Faturamento
+                        </a>
+                        <a class="menu-item nav-link nav-sublink" href="#" data-section="withdraw"
+                            onclick="window.navigateToSection('withdraw'); return false;">
+                            <i class="fas fa-money-bill-wave me-2"></i>Sacar Ganhos
+                        </a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Seção do Sistema (Retrátil) -->
+            <li class="nav-item">
+                <a class="menu-item nav-link collapsed" data-bs-toggle="collapse" href="#systemMenu" role="button"
+                    aria-expanded="false">
+                    <i class="fas fa-cogs me-2"></i>
+                    Sistema
+                    <i class="fas fa-chevron-down ms-auto menu-arrow"></i>
+                </a>
+                <div class="collapse" id="systemMenu">
+                    <div class="nav-submenu">
+                        <a class="menu-item nav-link nav-sublink" href="#" data-section="settings"
+                            onclick="window.navigateToSection('settings'); return false;">
+                            <i class="fas fa-cog me-2"></i>Configurações
+                        </a>
+                        <a class="menu-item nav-link nav-sublink" href="#" data-section="support"
+                            onclick="window.navigateToSection('support'); return false;">
+                            <i class="fas fa-question-circle me-2"></i>Suporte
+                        </a>
+                        <a class="menu-item nav-link nav-sublink" href="../admin-panel.html">
+                            <i class="fas fa-shield-alt me-2"></i>Admin Panel
+                        </a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Dashboard Rodapé -->
+    <li class="nav-item">
+        <a class="menu-item nav-link text-danger" href="#" onclick="logout(); return false;">
+            <i class="fas fa-sign-out-alt me-2"></i>Sair do Sistema
+        </a>
+    </li>
+</nav>
+
+<!-- Scripts do Dashboard Menu -->
+<script src="../js/shared/wallet.js"></script>
+<script src="../js/modules/dashboard-menu-logout.js"></script>

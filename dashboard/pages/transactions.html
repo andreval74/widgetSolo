@@ -1,0 +1,142 @@
+<!-- Transações Page -->
+<div class="transactions-section">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Histórico de Transações</h2>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary" onclick="refreshTransactions()">
+                <i class="fas fa-sync-alt"></i> Atualizar
+            </button>
+            <button class="btn btn-success" onclick="exportTransactions()">
+                <i class="fas fa-download"></i> Exportar
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="status-filter">
+                        <option value="">Todos</option>
+                        <option value="completed">Concluído</option>
+                        <option value="pending">Pendente</option>
+                        <option value="failed">Falhou</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Período</label>
+                    <select class="form-select" id="period-filter">
+                        <option value="today">Hoje</option>
+                        <option value="week">Esta Semana</option>
+                        <option value="month">Este Mês</option>
+                        <option value="all">Todas</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Valor Mínimo</label>
+                    <input type="number" class="form-control" id="min-value" placeholder="0.00">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Buscar Hash</label>
+                    <input type="text" class="form-control" id="hash-search" placeholder="0x...">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumo -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4 id="total-transactions-count" class="text-primary">0</h4>
+                    <small>Total de Transações</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4 id="total-volume" class="text-success">R$ 0,00</h4>
+                    <small>Volume Total</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4 id="avg-transaction-value" class="text-info">R$ 0,00</h4>
+                    <small>Valor Médio</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h4 id="success-rate" class="text-warning">0%</h4>
+                    <small>Taxa de Sucesso</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Transações -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>Widget</th>
+                            <th>Valor</th>
+                            <th>Taxa</th>
+                            <th>Status</th>
+                            <th>Hash</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Será preenchido dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading-transactions" class="text-center py-4">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p class="mt-2">Carregando transações...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function refreshTransactions() {
+    // Implementar atualização
+    if (typeof window.showToast === 'function') {
+        window.showToast('Transações atualizadas!', 'success');
+    }
+}
+
+function exportTransactions() {
+    // Implementar exportação
+    if (typeof window.showToast === 'function') {
+        window.showToast('Transações exportadas!', 'success');
+    }
+}
+
+// Carregar dados quando a página for exibida
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        document.getElementById('total-transactions-count').textContent = '247';
+        document.getElementById('total-volume').textContent = 'R$ 15.420,50';
+        document.getElementById('avg-transaction-value').textContent = 'R$ 62,43';
+        document.getElementById('success-rate').textContent = '98.4%';
+        
+        document.getElementById('loading-transactions').style.display = 'none';
+    }, 1000);
+});
+</script>
