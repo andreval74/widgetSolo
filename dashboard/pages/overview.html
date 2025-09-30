@@ -1,53 +1,88 @@
-<!-- Dashboard Overview -->
-<div class="overview-section">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>📊 Visão Geral</h2>
-        <div class="d-flex gap-2">
-            <button class="btn btn-primary" onclick="dashboardManager.showSection('new-contract')">
-                <i class="fas fa-plus me-2"></i>Novo Contrato
-            </button>
-            <button class="btn btn-outline-primary btn-sm" onclick="dashboardManager.refreshData()">
-                <i class="fas fa-sync-alt"></i> Atualizar
-            </button>
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-gradient-primary text-white border-0 shadow">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h2 class="mb-2">
+                            <i class="fas fa-cube me-2"></i>
+                            Bem-vindo ao Widget SaaS!
+                        </h2>
+                        <p class="mb-0 opacity-75">
+                            Plataforma completa para criação e gerenciamento de widgets de venda de tokens
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn btn-light btn-lg" onclick="loadSection('new-widget'); updateActiveMenu('new-widget');">
+                            <i class="fas fa-plus me-2"></i>
+                            Criar Widget
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
-    <!-- Cards de Estatísticas -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card stat-card">
-                <div class="card-body text-center">
-                    <i class="fas fa-cube stat-icon text-primary mb-2"></i>
-                    <h3 id="total-widgets" class="stat-number">0</h3>
-                    <p class="stat-label">Contratos</p>
+<!-- Estatísticas Principais -->
+<div class="row g-3 mb-4">
+    <div class="col-lg-3 col-md-6">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-puzzle-piece fa-3x text-primary"></i>
                 </div>
+                <h3 class="text-primary mb-1" id="widgets-count">3</h3>
+                <h6 class="text-muted mb-0">Widgets Criados</h6>
+                <small class="text-success">
+                    <i class="fas fa-arrow-up me-1"></i>+2 este mês
+                </small>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card stat-card">
-                <div class="card-body text-center">
-                    <i class="fas fa-shopping-cart stat-icon text-success mb-2"></i>
-                    <h3 id="total-earnings" class="stat-number">0</h3>
-                    <p class="stat-label">Vendas</p>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-chart-line fa-3x text-success"></i>
                 </div>
+                <h3 class="text-success mb-1" id="sales-count">127</h3>
+                <h6 class="text-muted mb-0">Vendas Realizadas</h6>
+                <small class="text-success">
+                    <i class="fas fa-arrow-up me-1"></i>+15% esta semana
+                </small>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card stat-card">
-                <div class="card-body text-center">
-                    <i class="fas fa-coins stat-icon text-warning mb-2"></i>
-                    <h3 id="available-credits" class="stat-number">0</h3>
-                    <p class="stat-label">Volume (ETH)</p>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-dollar-sign fa-3x text-warning"></i>
                 </div>
+                <h3 class="text-warning mb-1" id="revenue-count">12.5 BNB</h3>
+                <h6 class="text-muted mb-0">Receita Total</h6>
+                <small class="text-success">
+                    <i class="fas fa-arrow-up me-1"></i>≈ $3,200 USD
+                </small>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card stat-card">
-                <div class="card-body text-center">
-                    <i class="fas fa-percentage stat-icon text-info mb-2"></i>
-                    <h3 id="monthly-views" class="stat-number">0</h3>
-                    <p class="stat-label">Taxas Ganhas</p>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-coins fa-3x text-info"></i>
                 </div>
+                <h3 class="text-info mb-1" id="credits-count">850</h3>
+                <h6 class="text-muted mb-0">Créditos Disponíveis</h6>
+                <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>1 crédito = 1 venda
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
             </div>
         </div>
     </div>

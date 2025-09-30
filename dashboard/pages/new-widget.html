@@ -1,53 +1,219 @@
-<!-- New Widget Creation Page -->
-<div class="new-widget-section">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>🧩 Criar Novo Widget</h2>
-        <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary" onclick="dashboardManager.showSection('contracts')">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </button>
-            <button class="btn btn-outline-primary" onclick="resetForm()">
-                <i class="fas fa-refresh"></i> Limpar
-            </button>
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-plus-circle me-2 text-primary"></i>
+                        Criar Novo Widget
+                    </h5>
+                    <div>
+                        <button type="button" class="btn btn-outline-secondary me-2" onclick="loadSection('overview'); updateActiveMenu('overview');">
+                            <i class="fas fa-arrow-left me-1"></i>Voltar
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('widget-form').reset(); updatePreview();">
+                            <i class="fas fa-refresh me-1"></i>Limpar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <form id="widget-form">
+                    <!-- Informações Básicas -->
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-3">
+                            <i class="fas fa-info-circle me-2"></i>Informações Básicas
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="widget-name" class="form-label">Nome do Widget *</label>
+                                <input type="text" class="form-control" id="widget-name" placeholder="Ex: Venda de Token XYZ" required>
+                                <div class="form-text">Nome que aparecerá no widget</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="token-symbol" class="form-label">Símbolo do Token *</label>
+                                <input type="text" class="form-control" id="token-symbol" placeholder="Ex: XYZ" required>
+                                <div class="form-text">Símbolo único do seu token</div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="widget-description" class="form-label">Descrição</label>
+                            <textarea class="form-control" id="widget-description" rows="3" placeholder="Descrição do seu token e projeto..."></textarea>
+                            <div class="form-text">Descrição detalhada que aparecerá no widget</div>
+                        </div>
+                    </div>
+
+                    <!-- Configurações de Preço -->
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-3">
+                            <i class="fas fa-dollar-sign me-2"></i>Configurações de Preço
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="token-price" class="form-label">Preço por Token (BNB) *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="token-price" step="0.0001" placeholder="0.001" required>
+                                    <span class="input-group-text">BNB</span>
+                                </div>
+                                <div class="form-text">Preço em BNB por token</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="min-purchase" class="form-label">Compra Mínima</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="min-purchase" placeholder="1" min="1">
+                                    <span class="input-group-text">tokens</span>
+                                </div>
+                                <div class="form-text">Quantidade mínima por compra</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="total-supply" class="form-label">Total de Tokens Disponíveis *</label>
+                                <input type="number" class="form-control" id="total-supply" placeholder="1000000" required>
+                                <div class="form-text">Quantidade total para venda</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="max-purchase" class="form-label">Compra Máxima</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="max-purchase" placeholder="10000">
+                                    <span class="input-group-text">tokens</span>
+                                </div>
+                                <div class="form-text">Quantidade máxima por compra</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configurações Visuais -->
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-3">
+                            <i class="fas fa-palette me-2"></i>Aparência do Widget
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="widget-color" class="form-label">Cor Principal</label>
+                                <input type="color" class="form-control form-control-color" id="widget-color" value="#667eea">
+                                <div class="form-text">Cor que dominará o design do widget</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="widget-style" class="form-label">Estilo</label>
+                                <select class="form-select" id="widget-style">
+                                    <option value="modern">Moderno</option>
+                                    <option value="classic">Clássico</option>
+                                    <option value="minimal">Minimalista</option>
+                                    <option value="gradient">Gradiente</option>
+                                </select>
+                                <div class="form-text">Estilo visual do widget</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configurações de Rede -->
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-3">
+                            <i class="fas fa-network-wired me-2"></i>Configurações Blockchain
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="blockchain-network" class="form-label">Rede Blockchain *</label>
+                                <select class="form-select" id="blockchain-network" required>
+                                    <option value="">Selecionar rede...</option>
+                                    <option value="56">Binance Smart Chain (BSC)</option>
+                                    <option value="1">Ethereum Mainnet</option>
+                                    <option value="137">Polygon (MATIC)</option>
+                                    <option value="97">BSC Testnet</option>
+                                </select>
+                                <div class="form-text">Rede onde o token está implantado</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="token-contract" class="form-label">Endereço do Contrato</label>
+                                <input type="text" class="form-control" id="token-contract" placeholder="0x...">
+                                <div class="form-text">Endereço do contrato do token (opcional)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4 pt-3 border-top">
+                        <button type="button" class="btn btn-outline-secondary me-md-2" onclick="loadSection('overview'); updateActiveMenu('overview');">
+                            <i class="fas fa-times me-1"></i>Cancelar
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="previewWidget()">
+                            <i class="fas fa-eye me-1"></i>Visualizar
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-1"></i>Criar Widget
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-
-    <!-- Etapa 1: Seleção de Rede -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h6 class="mb-0">
-                <span class="badge bg-primary me-2">1</span>
-                Selecionar Rede Blockchain
-            </h6>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-8">
-                    <label for="networkSelect" class="form-label">Rede</label>
-                    <select id="networkSelect" class="form-select" onchange="selectNetwork()">
-                        <option value="">Escolha uma rede...</option>
-                        <option value="1">Ethereum Mainnet</option>
-                        <option value="56">BNB Smart Chain</option>
-                        <option value="137">Polygon</option>
-                        <option value="97">BSC Testnet</option>
-                    </select>
+    
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+            <div class="card-header bg-white border-bottom">
+                <h6 class="mb-0">
+                    <i class="fas fa-eye me-2 text-info"></i>
+                    Preview do Widget
+                </h6>
+            </div>
+            <div class="card-body">
+                <div id="widget-preview" class="border border-2 border-dashed rounded p-4 text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-cube fa-3x text-primary mb-3" id="preview-icon"></i>
+                        <h5 id="preview-name" class="text-dark">Nome do Widget</h5>
+                        <p class="text-muted small" id="preview-description">Descrição aparecerá aqui...</p>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small">Símbolo:</span>
+                            <strong id="preview-symbol" class="small">XYZ</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small">Preço:</span>
+                            <strong id="preview-price" class="small">0.001 BNB</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small">Disponível:</span>
+                            <strong id="preview-supply" class="small">1,000,000</strong>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary w-100" disabled>
+                        <i class="fas fa-shopping-cart me-1"></i>
+                        Comprar Tokens
+                    </button>
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-shield-alt me-1"></i>
+                            Seguro & Verificado
+                        </small>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <label for="chainId" class="form-label">Chain ID</label>
-                    <input type="text" id="chainId" class="form-control" readonly>
+                
+                <!-- Informações da Pre-visualização -->
+                <div class="mt-3">
+                    <h6 class="text-primary">
+                        <i class="fas fa-info-circle me-2"></i>Informações
+                    </h6>
+                    <div class="small text-muted">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Custo de criação:</span>
+                            <strong class="text-warning">10 créditos</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Taxa por venda:</span>
+                            <strong class="text-info">2%</strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Você recebe:</span>
+                            <strong class="text-success">98%</strong>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Etapa 2: Endereço do Contrato -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h6 class="mb-0">
-                <span class="badge bg-primary me-2">2</span>
-                Endereço do Contrato
-            </h6>
-        </div>
+</div>
         <div class="card-body">
             <div class="row">
                 <div class="col-md-10">
@@ -401,6 +567,208 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 console.log('📋 Sistema de criação de widget carregado');
+<script>
+// Atualizar preview em tempo real
+function updatePreview() {
+    const form = document.getElementById('widget-form');
+    
+    // Atualizar elementos do preview
+    document.getElementById('preview-name').textContent = 
+        document.getElementById('widget-name').value || 'Nome do Widget';
+    
+    document.getElementById('preview-symbol').textContent = 
+        document.getElementById('token-symbol').value || 'XYZ';
+    
+    document.getElementById('preview-description').textContent = 
+        document.getElementById('widget-description').value || 'Descrição aparecerá aqui...';
+    
+    const price = document.getElementById('token-price').value;
+    document.getElementById('preview-price').textContent = 
+        price ? `${price} BNB` : '0.001 BNB';
+    
+    const supply = document.getElementById('total-supply').value;
+    document.getElementById('preview-supply').textContent = 
+        supply ? Number(supply).toLocaleString() : '1,000,000';
+    
+    // Atualizar cor do preview
+    const color = document.getElementById('widget-color').value;
+    const previewCard = document.getElementById('widget-preview');
+    const buyButton = previewCard.querySelector('.btn-primary');
+    
+    if (buyButton) {
+        buyButton.style.backgroundColor = color;
+        buyButton.style.borderColor = color;
+    }
+    
+    // Atualizar ícone baseado no estilo
+    const style = document.getElementById('widget-style').value;
+    const icon = document.getElementById('preview-icon');
+    
+    const styleIcons = {
+        'modern': 'fas fa-cube',
+        'classic': 'fas fa-coins',
+        'minimal': 'fas fa-circle',
+        'gradient': 'fas fa-gem'
+    };
+    
+    if (icon) {
+        icon.className = `${styleIcons[style] || 'fas fa-cube'} fa-3x text-primary mb-3`;
+    }
+}
+
+// Visualizar widget em modal
+function previewWidget() {
+    const name = document.getElementById('widget-name').value;
+    const symbol = document.getElementById('token-symbol').value;
+    const price = document.getElementById('token-price').value;
+    
+    if (!name || !symbol || !price) {
+        alert('Por favor, preencha os campos obrigatórios (Nome, Símbolo e Preço)');
+        return;
+    }
+    
+    // Criar modal de preview
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.innerHTML = `
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Preview do Widget - ${name}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center p-4" style="background: linear-gradient(135deg, ${document.getElementById('widget-color').value}, ${document.getElementById('widget-color').value}44);">
+                        <h3 class="text-white mb-3">${name}</h3>
+                        <p class="text-white mb-4">${document.getElementById('widget-description').value || 'Descrição do projeto'}</p>
+                        <div class="bg-white rounded p-4 d-inline-block">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <h5 class="text-primary">${symbol}</h5>
+                                    <small class="text-muted">Token</small>
+                                </div>
+                                <div class="col-4">
+                                    <h5 class="text-success">${price} BNB</h5>
+                                    <small class="text-muted">Preço</small>
+                                </div>
+                                <div class="col-4">
+                                    <h5 class="text-info">${Number(document.getElementById('total-supply').value || 1000000).toLocaleString()}</h5>
+                                    <small class="text-muted">Disponível</small>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-8">
+                                    <input type="number" class="form-control" placeholder="Quantidade" min="1">
+                                </div>
+                                <div class="col-4">
+                                    <button class="btn btn-primary w-100" style="background-color: ${document.getElementById('widget-color').value};">
+                                        Comprar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-success" onclick="createWidget()" data-bs-dismiss="modal">
+                        <i class="fas fa-save me-1"></i>Criar Este Widget
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+    
+    // Remover modal quando fechado
+    modal.addEventListener('hidden.bs.modal', () => {
+        modal.remove();
+    });
+}
+
+// Criar widget
+function createWidget() {
+    const form = document.getElementById('widget-form');
+    
+    // Validar campos obrigatórios
+    const requiredFields = ['widget-name', 'token-symbol', 'token-price', 'total-supply', 'blockchain-network'];
+    for (let field of requiredFields) {
+        if (!document.getElementById(field).value) {
+            alert(`Campo obrigatório: ${document.querySelector(`label[for="${field}"]`).textContent}`);
+            return;
+        }
+    }
+    
+    // Simular criação do widget
+    const widgetData = {
+        id: 'widget_' + Date.now(),
+        name: document.getElementById('widget-name').value,
+        symbol: document.getElementById('token-symbol').value,
+        description: document.getElementById('widget-description').value,
+        price: parseFloat(document.getElementById('token-price').value),
+        minPurchase: parseInt(document.getElementById('min-purchase').value) || 1,
+        maxPurchase: parseInt(document.getElementById('max-purchase').value) || null,
+        totalSupply: parseInt(document.getElementById('total-supply').value),
+        color: document.getElementById('widget-color').value,
+        style: document.getElementById('widget-style').value,
+        network: document.getElementById('blockchain-network').value,
+        contract: document.getElementById('token-contract').value,
+        createdAt: new Date().toISOString(),
+        status: 'active'
+    };
+    
+    // Salvar no localStorage (simulação)
+    let widgets = JSON.parse(localStorage.getItem('widgets') || '[]');
+    widgets.push(widgetData);
+    localStorage.setItem('widgets', JSON.stringify(widgets));
+    
+    // Mostrar sucesso
+    const alert = document.createElement('div');
+    alert.className = 'alert alert-success alert-dismissible fade show position-fixed';
+    alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999;';
+    alert.innerHTML = `
+        <i class="fas fa-check-circle me-2"></i>
+        Widget "${widgetData.name}" criado com sucesso!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(alert);
+    
+    setTimeout(() => {
+        alert.remove();
+        loadSection('widgets');
+        updateActiveMenu('widgets');
+    }, 2000);
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Atualizar preview quando campos mudarem
+    const formFields = document.querySelectorAll('#widget-form input, #widget-form select, #widget-form textarea');
+    formFields.forEach(field => {
+        field.addEventListener('input', updatePreview);
+        field.addEventListener('change', updatePreview);
+    });
+    
+    // Submit do formulário
+    document.getElementById('widget-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        createWidget();
+    });
+    
+    // Carregar preview inicial
+    updatePreview();
+});
+
+// Função para resetar formulário
+function resetForm() {
+    document.getElementById('widget-form').reset();
+    updatePreview();
+}
+
 console.log('🔍 Ethers.js disponível:', typeof ethers !== 'undefined');
 console.log('🦊 MetaMask disponível:', typeof window.ethereum !== 'undefined');
 </script>

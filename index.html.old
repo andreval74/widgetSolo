@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Widget SaaS</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS Unificado -->
+    <link href="css/unified-styles.css" rel="stylesheet">
+
+    <!-- CSS para Layout do Dashboard -->
+    <style>
+        /* Layout principal do dashboard */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar fixa à esquerda */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            overflow-y: auto;
+            z-index: 1000;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Conteúdo principal à direita */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 20px;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        /* Menu items */
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            margin: 2px 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .sidebar .nav-link i {
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Cards e componentes */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+
+<body data-theme="dark" class="theme-dark">
+    <div class="dashboard-container">
+
+        <!-- Menu Lateral Dinâmico -->
+        <div id="dashboard-menu-container" class="sidebar"></div>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <div id="main-content">
+    
+                <!-- Conteúdo será carregado dinamicamente -->
+
+            </div>
+        </main>
+    </div>
+    
+    <!-- Dashboard Footer -->
+    <div data-component="dash-footer"></div>
+
+    <!-- Scripts -->
+    <script src="src/ui/template-loader.js"></script>
+    <script src="src/core/data/data-manager.js"></script>
+    <script src="src/ui/dashboard.js"></script>
+    <script src="src/core/auth/auth-manager.js"></script>
+    <script src="src/core/user-level-manager.js"></script>
+    <script src="src/ui/theme-controller.js"></script>
+
+    <!-- Inicialização do Dashboard -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('🎯 Inicializando Dashboard...');
+
+            // Sistema simples de carregamento de menu
+            loadDashboardMenu();
+
+            // Configurar navegação
+            setupNavigation();
+        });
+
+        // Carregar menu do dashboard
+        async function loadDashboardMenu() {
+            try {
+                const response = await fetch('dashboard/dashboard-menu.html');
+                if (response.ok) {
+                    const menuHTML = await response.text();
+                    document.getElementById('dashboard-menu-container').innerHTML = menuHTML;
+                    console.log('✅ Menu lateral carregado');
+
+                    // Debug: verificar estrutura do menu
+                    setTimeout(() => {
+                        debugMenuStructure();
+                        setupMenuEvents();
+                    }, 300);
+
+                    // Carregar seção inicial
+                    loadSection('overview');
+                } else {
+                    console.error('❌ Erro ao carregar menu:', response.status);
+                    showBasicMenu();
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar menu:', error);
+                // Fallback: mostrar menu básico
+                showBasicMenu();
+            }
+        }
+
+        // Debug da estrutura do menu
+        function debugMenuStructure() {
+            console.log('🔍 Debug da estrutura do menu:');
+            const menuContainer = document.getElementById('dashboard-menu-container');
+            const allLinks = menuContainer.querySelectorAll('a');
+            
+            console.log(`📋 Total de links encontrados: ${allLinks.length}`);
+            
+            allLinks.forEach((link, index) => {
+                console.log(`Link ${index + 1}:`, {
+                    texto: link.textContent.trim(),
+                    href: link.getAttribute('href'),
+                    dataSection: link.getAttribute('data-section'),
+                    classes: link.className,
+                    onclick: link.getAttribute('onclick')
+                });
+            });
+        }
+
+        // Configurar eventos do menu carregado
+        function setupMenuEvents() {
+            console.log('🔧 Configurando eventos do menu...');
+            
+            const menuContainer = document.getElementById('dashboard-menu-container');
+            
+            // Buscar por todos os tipos de links possíveis
+            const allMenuLinks = menuContainer.querySelectorAll('a[data-section], a[onclick*="navigateToSection"], .menu-item, .nav-link');
+            
+            console.log(`🎯 Encontrados ${allMenuLinks.length} links para configurar`);
+            
+            allMenuLinks.forEach((link, index) => {
+                // Remover eventos existentes
+                const newLink = link.cloneNode(true);
+                link.parentNode.replaceChild(newLink, link);
+                
+                // Adicionar novo evento
+                newLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Determinar a seção baseada em diferentes atributos
+                    let section = newLink.getAttribute('data-section');
+                    
+                    if (!section) {
+                        const onclickAttr = newLink.getAttribute('onclick');
+                        if (onclickAttr && onclickAttr.includes('navigateToSection')) {
+                            const match = onclickAttr.match(/navigateToSection\('([^']+)'\)/);
+                            if (match) section = match[1];
+                        }
+                    }
+                    
+                    if (!section) {
+                        section = getSectionFromText(newLink.textContent.trim());
+                    }
+                    
+                    console.log(`🚀 Navegando para: ${section} (Link: "${newLink.textContent.trim()}")`);
+                    
+                    if (section) {
+                        loadSection(section);
+                        updateActiveMenu(section);
+                    }
+                });
+                
+                console.log(`✅ Evento configurado para: "${newLink.textContent.trim()}"`);
+            });
+        }
+
+        // Converter texto em seção
+        function getSectionFromText(text) {
+            const textMap = {
+                'Overview': 'overview',
+                'Criar Widget': 'new-widget',
+                'Gerenciar Widgets': 'widgets',
+                'Templates': 'templates',
+                'Transações': 'transactions',
+                'Meus Ganhos': 'earnings',
+                'Relatórios': 'reports',
+                'Meus Créditos': 'credits',
+                'Comprar Créditos': 'buy-credits',
+                'Faturamento': 'billing',
+                'Sacar Ganhos': 'withdraw',
+                'Configurações': 'settings',
+                'Suporte': 'support',
+                'Novo Contrato': 'new-contract',
+                'Contratos': 'contracts'
+            };
+            
+            // Busca exata primeiro
+            if (textMap[text]) return textMap[text];
+            
+            // Busca parcial
+            for (const [key, value] of Object.entries(textMap)) {
+                if (text.includes(key) || key.includes(text)) {
+                    return value;
+                }
+            }
+            
+            // Fallback: converter texto para formato de seção
+            return text.toLowerCase()
+                      .replace(/\s+/g, '-')
+                      .replace(/[^a-z0-9-]/g, '')
+                      .replace(/^-+|-+$/g, '');
+        }
+
+        // Menu básico de fallback
+        function showBasicMenu() {
+            document.getElementById('dashboard-menu-container').innerHTML = `
+                <div class="sidebar">
+                    <div class="d-flex align-items-center p-3 border-bottom">
+                        <i class="fas fa-cube me-2 text-white fs-3"></i>
+                        <span class="fw-bold text-white fs-4">Widget SaaS</span>
+                    </div>
+                    <div class="sidebar-body mt-3">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="overview">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Overview
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="new-widget">
+                                    <i class="fas fa-plus me-2"></i>Criar Widget
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="widgets">
+                                    <i class="fas fa-puzzle-piece me-2"></i>Meus Widgets
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="transactions">
+                                    <i class="fas fa-exchange-alt me-2"></i>Transações
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="earnings">
+                                    <i class="fas fa-dollar-sign me-2"></i>Ganhos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="credits">
+                                    <i class="fas fa-coins me-2"></i>Créditos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="settings">
+                                    <i class="fas fa-cog me-2"></i>Configurações
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="support">
+                                    <i class="fas fa-question-circle me-2"></i>Suporte
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            console.log('✅ Menu básico carregado');
+            
+            // Configurar eventos do menu básico
+            setTimeout(() => {
+                setupBasicMenuEvents();
+            }, 100);
+        }
+        
+        // Configurar eventos do menu básico
+        function setupBasicMenuEvents() {
+            const basicLinks = document.querySelectorAll('#dashboard-menu-container a[data-section]');
+            console.log(`🔧 Configurando ${basicLinks.length} links do menu básico`);
+            
+            basicLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('data-section');
+                    console.log(`🎯 Clique no menu básico: ${section}`);
+                    if (section) {
+                        loadSection(section);
+                        updateActiveMenu(section);
+                    }
+                });
+            });
+        }
+
+        // Configurar navegação
+        function setupNavigation() {
+            // Função global para navegação (usada pelo menu carregado)
+            window.navigateToSection = function (section) {
+                loadSection(section);
+            };
+
+            // Função global de logout
+            window.logout = function () {
+                console.log('🚪 Logout realizado');
+                localStorage.clear();
+                location.reload();
+            };
+
+            // Aguardar um pouco e configurar eventos de clique nos links do menu
+            setTimeout(() => {
+                const menuLinks = document.querySelectorAll('.menu-item[data-section]');
+                menuLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const section = link.getAttribute('data-section');
+                        if (section) {
+                            loadSection(section);
+                        }
+                    });
+                });
+
+                console.log(`✅ ${menuLinks.length} links de menu configurados`);
+            }, 500);
+        }
+
+        // Carregar seção
+        async function loadSection(section) {
+            console.log(`📄 Carregando seção: ${section}`);
+
+            const mainContent = document.getElementById('main-content');
+
+            // Mostrar loading
+            mainContent.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Carregando ${section}...</p>
+                </div>
+            `;
+
+            try {
+                // Tentar carregar página específica do dashboard/pages
+                const response = await fetch(`dashboard/pages/${section}.html`);
+
+                if (response.ok) {
+                    const content = await response.text();
+                    mainContent.innerHTML = content;
+                    console.log(`✅ Página ${section}.html carregada`);
+
+                    // Executar scripts específicos da página se existirem
+                    executePageScripts(section);
+
+                    // Atualizar menu ativo
+                    updateActiveMenu(section);
+                } else {
+                    console.log(`⚠️ Página ${section}.html não encontrada (${response.status}), usando conteúdo padrão`);
+                    loadDefaultContent(section);
+                }
+
+            } catch (error) {
+                console.log(`⚠️ Erro ao carregar ${section}.html:`, error.message);
+                loadDefaultContent(section);
+            }
+        }
+
+        // Executar scripts específicos das páginas
+        function executePageScripts(section) {
+            // Criar objeto dashboardManager básico se não existir
+            if (typeof window.dashboardManager === 'undefined') {
+                window.dashboardManager = {
+                    showSection: function (newSection) {
+                        loadSection(newSection);
+                    },
+                    refreshData: function () {
+                        console.log('🔄 Atualizando dados...');
+                        loadSection(getCurrentSection());
+                    }
+                };
+            }
+
+            // Criar funções globais necessárias
+            window.selectNetwork = window.selectNetwork || function () { console.log('Rede selecionada'); };
+            window.resetForm = window.resetForm || function () { console.log('Formulário resetado'); };
+            window.viewContractDetails = window.viewContractDetails || function (id) { console.log('Detalhes do contrato:', id); };
+
+            // Scripts específicos por seção
+            switch (section) {
+                case 'new-widget':
+                case 'new-contract':
+                    setupFormValidation();
+                    break;
+                case 'overview':
+                    loadDashboardStats();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // Atualizar menu ativo
+        function updateActiveMenu(section) {
+            // Remover classe active de todos os links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Adicionar classe active ao link correspondente
+            const activeLink = document.querySelector(`[data-section="${section}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+
+        // Carregar conteúdo padrão se a página não existir
+        function loadDefaultContent(section) {
+            const mainContent = document.getElementById('main-content');
+            const sectionContent = getSectionContent(section);
+            mainContent.innerHTML = sectionContent;
+        }
+
+        // Validação de formulários
+        function setupFormValidation() {
+            console.log('📝 Configurando validação de formulários');
+            // Adicionar validação personalizada aqui
+        }
+
+        // Carregar estatísticas do dashboard
+        function loadDashboardStats() {
+            console.log('📊 Carregando estatísticas...');
+            // Atualizar dados dos cards de estatísticas
+        }
+
+        // Obter seção atual
+        function getCurrentSection() {
+            return document.querySelector('.nav-link.active')?.getAttribute('data-section') || 'overview';
+        }
+
+        // Obter conteúdo da seção
+        function getSectionContent(section) {
+            switch (section) {
+                case 'overview':
+                    return getOverviewContent();
+                case 'new-widget':
+                    return getNewWidgetContent();
+                case 'widgets':
+                    return getWidgetsContent();
+                case 'transactions':
+                    return getTransactionsContent();
+                case 'earnings':
+                    return getEarningsContent();
+                case 'reports':
+                    return getReportsContent();
+                case 'credits':
+                    return getCreditsContent();
+                case 'buy-credits':
+                    return getBuyCreditsContent();
+                case 'settings':
+                    return getSettingsContent();
+                case 'support':
+                    return getSupportContent();
+                default:
+                    return getDefaultContent(section);
+            }
+        }
+
+        // Conteúdo do Overview
+        function getOverviewContent() {
+            return `
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <h3 class="mb-2">
+                                    <i class="fas fa-cube me-2"></i>
+                                    Bem-vindo ao Widget SaaS!
+                                </h3>
+                                <p class="mb-0">Sistema completo para criação e gerenciamento de widgets de venda de tokens</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row g-3 mb-4">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-puzzle-piece fa-2x text-primary mb-3"></i>
+                                <h4 class="text-primary">0</h4>
+                                <h6 class="text-muted">Widgets Criados</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-chart-line fa-2x text-success mb-3"></i>
+                                <h4 class="text-success">0</h4>
+                                <h6 class="text-muted">Vendas Realizadas</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-dollar-sign fa-2x text-warning mb-3"></i>
+                                <h4 class="text-warning">0 BNB</h4>
+                                <h6 class="text-muted">Receita Total</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-coins fa-2x text-info mb-3"></i>
+                                <h4 class="text-info">100</h4>
+                                <h6 class="text-muted">Créditos Disponíveis</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Conteúdo de Criar Widget
+        function getNewWidgetContent() {
+            return `
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-plus-circle me-2"></i>
+                            Criar Novo Widget
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nome do Widget</label>
+                                    <input type="text" class="form-control" placeholder="Ex: Venda de Token XYZ">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Símbolo do Token</label>
+                                    <input type="text" class="form-control" placeholder="Ex: XYZ">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Preço por Token (BNB)</label>
+                                    <input type="number" class="form-control" step="0.001" placeholder="0.001">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Total de Tokens</label>
+                                    <input type="number" class="form-control" placeholder="1000000">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Descrição</label>
+                                <textarea class="form-control" rows="3" placeholder="Descrição do seu token e projeto..."></textarea>
+                            </div>
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button type="button" class="btn btn-outline-secondary" onclick="loadSection('overview')">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i>
+                                    Criar Widget
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Outros conteúdos
+        function getWidgetsContent() {
+            return `
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-puzzle-piece me-2"></i>
+                            Meus Widgets
+                        </h5>
+                        <button class="btn btn-primary" onclick="loadSection('new-widget')">
+                            <i class="fas fa-plus me-1"></i>
+                            Novo Widget
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center py-5">
+                            <i class="fas fa-puzzle-piece fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">Nenhum widget criado ainda</h5>
+                            <p class="text-muted">Crie seu primeiro widget para começar a vender tokens</p>
+                            <button class="btn btn-primary btn-lg" onclick="loadSection('new-widget')">
+                                <i class="fas fa-plus me-2"></i>
+                                Criar Primeiro Widget
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getDefaultContent(section) {
+            const sectionName = section.charAt(0).toUpperCase() + section.slice(1);
+            return `
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-cog me-2"></i>
+                            ${sectionName}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center py-5">
+                            <i class="fas fa-tools fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">Em desenvolvimento</h5>
+                            <p class="text-muted">Esta funcionalidade estará disponível em breve</p>
+                            <button class="btn btn-primary" onclick="loadSection('overview')">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Voltar ao Dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Funções auxiliares para outras seções
+        function getTransactionsContent() { return getDefaultContent('transactions'); }
+        function getEarningsContent() { return getDefaultContent('earnings'); }
+        function getReportsContent() { return getDefaultContent('reports'); }
+        function getCreditsContent() { return getDefaultContent('credits'); }
+        function getBuyCreditsContent() { return getDefaultContent('buy-credits'); }
+        function getSettingsContent() { return getDefaultContent('settings'); }
+        function getSupportContent() { return getDefaultContent('support'); }
+    </script>
+    </script>
+</body>
+
+</html>

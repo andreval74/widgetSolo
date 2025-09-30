@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Widget SaaS - Dashboard Principal</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- CSS Unificado -->
+    <link href="css/unified-styles.css" rel="stylesheet">
+</head>
+<body data-theme="dark" class="theme-dark">
+    <!-- Menu Lateral Dinâmico -->
+    <div id="dashboard-menu-container"></div>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+        <div class="container mt-4">
+            <div id="main-content">
+                <!-- Conteúdo será carregado dinamicamente -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Sistema de navegação e carregamento
+        console.log('🚀 Iniciando Widget SaaS Dashboard...');
+
+        // Carregar menu lateral
+        async function loadDashboardMenu() {
+            try {
+                const response = await fetch('dashboard/dashboard-menu.html');
+                const menuHTML = await response.text();
+                document.getElementById('dashboard-menu-container').innerHTML = menuHTML;
+                
+                console.log('✅ Menu lateral carregado');
+                
+                // Inicializar navegação
+                setupNavigation();
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar menu:', error);
+            }
+        }
+
+        // Configurar sistema de navegação
+        function setupNavigation() {
+            // Função global para navegação entre seções
+            window.navigateToSection = function(section) {
+                console.log(`📄 Navegando para seção: ${section}`);
+                
+                // Atualizar menu ativo
+                document.querySelectorAll('.menu-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                const activeItem = document.querySelector(`[data-section="${section}"]`);
+                if (activeItem) {
+                    activeItem.classList.add('active');
+                }
+                
+                // Carregar conteúdo da seção
+                loadSectionContent(section);
+            };
+            
+            // Função de logout
+            window.logout = function() {
+                console.log('🚪 Fazendo logout...');
+                
+                // Limpar dados
+                localStorage.clear();
+                
+                // Redirecionar ou mostrar tela de login
+                alert('Logout realizado com sucesso!');
+                location.reload();
+            };
+        }
+
+        // Carregar conteúdo da seção
+        async function loadSectionContent(section) {
+            const contentDiv = document.getElementById('main-content');
+            
+            // Mostrar loading
+            contentDiv.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Carregando ${section}...</p>
+                </div>
+            `;
+            
+            try {
+                // Tentar carregar página específica
+                const response = await fetch(`dashboard/pages/${section}.html`);
+                
+                if (response.ok) {
+                    const content = await response.text();
+                    contentDiv.innerHTML = content;
+                } else {
+                    // Fallback para conteúdo padrão
+                    loadDefaultSectionContent(section);
+                }
+                
+            } catch (error) {
+                console.log(`⚠️ Arquivo ${section}.html não encontrado, usando conteúdo padrão`);
+                loadDefaultSectionContent(section);
+            }
+        }
+
+        // Conteúdo padrão para seções
+        function loadDefaultSectionContent(section) {
+            const contentDiv = document.getElementById('main-content');
+            
+            const sectionContent = {
+                overview: generateOverviewContent(),
+                'new-widget': generateNewWidgetContent(),
+                widgets: generateWidgetsContent(),
+                templates: generateTemplatesContent(),
+                transactions: generateTransactionsContent(),
+                earnings: generateEarningsContent(),
+                reports: generateReportsContent(),
+                credits: generateCreditsContent(),
+                'buy-credits': generateBuyCreditsContent(),
+                billing: generateBillingContent(),
+                withdraw: generateWithdrawContent(),
+                settings: generateSettingsContent(),
+                support: generateSupportContent()
+            };
+            
+            contentDiv.innerHTML = sectionContent[section] || generateDefaultContent(section);
+        }
+
+        // Gerar conteúdo do overview
+        function generateOverviewContent() {
+            return `
+                <!-- Boas-vindas -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h3 class="mb-2">
+                                            <i class="fas fa-cube me-2"></i>
+                                            Bem-vindo ao Widget SaaS!
+                                        </h3>
+                                        <p class="mb-0 opacity-75">
+                                            Plataforma completa para criação e gerenciamento de widgets de venda de tokens
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <button class="btn btn-light btn-lg" onclick="navigateToSection('new-widget')">
+                                            <i class="fas fa-plus me-2"></i>
+                                            Criar Widget
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estatísticas Principais -->
+                <div class="row g-3 mb-4">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card h-100 stats-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-puzzle-piece fa-2x text-primary mb-3"></i>
+                                <h4 class="text-primary" id="widgets-count">0</h4>
+                                <h6 class="text-muted mb-0">Widgets Criados</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card h-100 stats-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-chart-line fa-2x text-success mb-3"></i>
+                                <h4 class="text-success" id="sales-count">0</h4>
+                                <h6 class="text-muted mb-0">Vendas Realizadas</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card h-100 stats-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-dollar-sign fa-2x text-warning mb-3"></i>
+                                <h4 class="text-warning" id="revenue-count">0 BNB</h4>
+                                <h6 class="text-muted mb-0">Receita Total</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card h-100 stats-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-coins fa-2x text-info mb-3"></i>
+                                <h4 class="text-info" id="credits-count">100</h4>
+                                <h6 class="text-muted mb-0">Créditos Disponíveis</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ações Rápidas -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-bolt me-2"></i>
+                                    Ações Rápidas
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="card quick-action-card bg-primary text-white h-100" onclick="navigateToSection('new-widget')" style="cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-plus fa-2x mb-2"></i>
+                                                <h6 class="fw-bold">Novo Widget</h6>
+                                                <small class="opacity-75">Criar widget de venda</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="card quick-action-card bg-success text-white h-100" onclick="navigateToSection('widgets')" style="cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-list fa-2x mb-2"></i>
+                                                <h6 class="fw-bold">Gerenciar</h6>
+                                                <small class="opacity-75">Meus widgets</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="card quick-action-card bg-info text-white h-100" onclick="navigateToSection('transactions')" style="cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-exchange-alt fa-2x mb-2"></i>
+                                                <h6 class="fw-bold">Vendas</h6>
+                                                <small class="opacity-75">Ver transações</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="card quick-action-card bg-warning text-white h-100" onclick="navigateToSection('buy-credits')" style="cursor: pointer;">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                                                <h6 class="fw-bold">Créditos</h6>
+                                                <small class="opacity-75">Comprar mais</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Atividade Recente -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-clock me-2"></i>
+                                    Atividade Recente
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center py-4">
+                                    <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">Nenhuma atividade ainda.</p>
+                                    <p class="text-muted small">Crie seu primeiro widget para começar!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Gerar conteúdo para criar widget
+        function generateNewWidgetContent() {
+            return `
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-plus-circle me-2"></i>
+                                    Criar Novo Widget
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="widget-form">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="widget-name" class="form-label">Nome do Widget</label>
+                                            <input type="text" class="form-control" id="widget-name" placeholder="Ex: Venda de Token XYZ">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="token-symbol" class="form-label">Símbolo do Token</label>
+                                            <input type="text" class="form-control" id="token-symbol" placeholder="Ex: XYZ">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="token-price" class="form-label">Preço por Token (BNB)</label>
+                                            <input type="number" class="form-control" id="token-price" step="0.001" placeholder="0.001">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="total-supply" class="form-label">Total de Tokens</label>
+                                            <input type="number" class="form-control" id="total-supply" placeholder="1000000">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="widget-description" class="form-label">Descrição</label>
+                                        <textarea class="form-control" id="widget-description" rows="3" placeholder="Descrição do seu token e projeto..."></textarea>
+                                    </div>
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button type="button" class="btn btn-outline-secondary me-md-2" onclick="navigateToSection('overview')">Cancelar</button>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save me-1"></i>
+                                            Criar Widget
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-eye me-2"></i>
+                                    Preview do Widget
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center p-3 border border-2 border-dashed rounded">
+                                    <div class="mb-3">
+                                        <i class="fas fa-cube fa-2x text-primary mb-2"></i>
+                                        <h6>Preview em tempo real</h6>
+                                        <p class="small text-muted">Preencha o formulário para ver o resultado</p>
+                                    </div>
+                                    <button class="btn btn-primary w-100" disabled>
+                                        <i class="fas fa-shopping-cart me-1"></i>
+                                        Comprar Tokens
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Gerar outros conteúdos padrão
+        function generateWidgetsContent() {
+            return `
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-puzzle-piece me-2"></i>
+                            Meus Widgets
+                        </h5>
+                        <button class="btn btn-primary" onclick="navigateToSection('new-widget')">
+                            <i class="fas fa-plus me-1"></i>
+                            Novo Widget
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center py-5">
+                            <i class="fas fa-puzzle-piece fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">Nenhum widget criado ainda</h5>
+                            <p class="text-muted">Crie seu primeiro widget para começar a vender tokens</p>
+                            <button class="btn btn-primary btn-lg" onclick="navigateToSection('new-widget')">
+                                <i class="fas fa-plus me-2"></i>
+                                Criar Primeiro Widget
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateDefaultContent(section) {
+            const sectionTitles = {
+                templates: 'Templates de Widget',
+                transactions: 'Histórico de Transações',
+                earnings: 'Meus Ganhos',
+                reports: 'Relatórios de Vendas',
+                credits: 'Meus Créditos',
+                'buy-credits': 'Comprar Créditos',
+                billing: 'Faturamento',
+                withdraw: 'Sacar Ganhos',
+                settings: 'Configurações',
+                support: 'Suporte e Ajuda'
+            };
+            
+            return `
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-cog me-2"></i>
+                            ${sectionTitles[section] || 'Seção'}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center py-5">
+                            <i class="fas fa-tools fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">Em desenvolvimento</h5>
+                            <p class="text-muted">Esta funcionalidade estará disponível em breve</p>
+                            <button class="btn btn-primary" onclick="navigateToSection('overview')">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Voltar ao Dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🔧 Inicializando sistema...');
+            
+            // Carregar menu
+            await loadDashboardMenu();
+            
+            // Carregar overview por padrão
+            setTimeout(() => {
+                navigateToSection('overview');
+            }, 500);
+            
+            console.log('✅ Sistema inicializado com sucesso!');
+        });
+    </script>
+</body>
+</html>
+        
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        
+        .sidebar-brand {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sidebar-brand i {
+            margin-right: 0.5rem;
+        }
+        
+        .sidebar.collapsed .brand-text {
+            display: none;
+        }
+        
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+        
+        .nav-item {
+            margin: 0.2rem 0;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 0.8rem 1rem;
+            border-radius: 0.5rem;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .nav-link i {
+            width: 20px;
+            margin-right: 0.75rem;
+            text-align: center;
+        }
+        
+        .sidebar.collapsed .nav-text {
+            display: none;
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+        
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed);
+        }
+        
+        .content-header {
+            background: white;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .content-body {
+            padding: 2rem;
+        }
+        
+        .stats-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .sidebar-toggle {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .section-content {
+            display: none;
+        }
+        
+        .section-content.active {
+            display: block;
+        }
+        
+        .widget-preview {
+            border: 2px dashed #dee2e6;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            background: #f8f9fa;
+        }
+        
+        .action-card {
+            border: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .content-header {
+                padding: 1rem;
+            }
+            
+            .content-body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-brand">
+                <i class="fas fa-cube"></i>
+                <span class="brand-text">Widget SaaS</span>
+            </a>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-item">
+                <a class="nav-link active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link" data-section="widgets">
+                    <i class="fas fa-puzzle-piece"></i>
+                    <span class="nav-text">Meus Widgets</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link" data-section="create-widget">
+                    <i class="fas fa-plus-circle"></i>
+                    <span class="nav-text">Criar Widget</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link" data-section="transactions">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span class="nav-text">Transações</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link" data-section="analytics">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="nav-text">Análises</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link" data-section="credits">
+                    <i class="fas fa-coins"></i>
+                    <span class="nav-text">Créditos</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link" data-section="settings">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-text">Configurações</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link" data-section="help">
+                    <i class="fas fa-question-circle"></i>
+                    <span class="nav-text">Ajuda</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Header -->
+        <div class="content-header">
+            <div class="d-flex align-items-center">
+                <button class="sidebar-toggle me-3" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="h4 mb-0" id="page-title">Dashboard</h1>
+            </div>
+            <div class="d-flex align-items-center">
+                <span class="badge bg-success me-3">Sistema Ativo</span>
+                <button class="btn btn-outline-primary btn-sm" onclick="connectWallet()" id="wallet-btn">
+                    <i class="fas fa-wallet me-1"></i>
+                    Conectar Carteira
+                </button>
+            </div>
+        </div>
+
+        <!-- Content Body -->
+        <div class="content-body">
+            <!-- Dashboard Section -->
+            <div id="section-dashboard" class="section-content active">
+                <!-- Welcome Card -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card bg-gradient-primary text-white">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h2 class="card-title mb-2">
+                                            <i class="fas fa-rocket me-2"></i>
+                                            Bem-vindo ao Widget SaaS!
+                                        </h2>
+                                        <p class="card-text mb-0">
+                                            Sistema completo para integração de widgets de venda de tokens. 
+                                            Crie, configure e monitore suas vendas de forma simples e eficiente.
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <button class="btn btn-light btn-lg" onclick="showSection('create-widget')">
+                                            <i class="fas fa-plus me-2"></i>
+                                            Criar Widget
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="card stats-card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-puzzle-piece fa-3x text-primary mb-3"></i>
+                                <h3 class="text-primary mb-1" id="widgets-count">0</h3>
+                                <p class="text-muted mb-0">Widgets Criados</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="card stats-card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                                <h3 class="text-success mb-1" id="sales-count">0</h3>
+                                <p class="text-muted mb-0">Vendas Realizadas</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="card stats-card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-dollar-sign fa-3x text-warning mb-3"></i>
+                                <h3 class="text-warning mb-1" id="revenue-count">0 BNB</h3>
+                                <p class="text-muted mb-0">Receita Total</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="card stats-card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-coins fa-3x text-info mb-3"></i>
+                                <h3 class="text-info mb-1" id="credits-count">100</h3>
+                                <p class="text-muted mb-0">Créditos Disponíveis</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-bolt me-2"></i>
+                                    Ações Rápidas
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card action-card bg-primary text-white h-100" onclick="showSection('create-widget')">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-plus fa-2x mb-3"></i>
+                                                <h6 class="card-title">Criar Novo Widget</h6>
+                                                <p class="card-text small">Configure e publique um widget de venda</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card action-card bg-success text-white h-100" onclick="showSection('widgets')">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-list fa-2x mb-3"></i>
+                                                <h6 class="card-title">Gerenciar Widgets</h6>
+                                                <p class="card-text small">Visualize e edite seus widgets</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card action-card bg-info text-white h-100" onclick="showSection('analytics')">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-chart-bar fa-2x mb-3"></i>
+                                                <h6 class="card-title">Ver Relatórios</h6>
+                                                <p class="card-text small">Acompanhe suas vendas e estatísticas</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-clock me-2"></i>
+                                    Atividade Recente
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center py-4">
+                                    <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">Nenhuma atividade ainda.</p>
+                                    <p class="text-muted small">Crie seu primeiro widget para começar!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Widgets Section -->
+            <div id="section-widgets" class="section-content">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-puzzle-piece me-2"></i>
+                                    Meus Widgets
+                                </h5>
+                                <button class="btn btn-primary" onclick="showSection('create-widget')">
+                                    <i class="fas fa-plus me-1"></i>
+                                    Novo Widget
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center py-5">
+                                    <i class="fas fa-puzzle-piece fa-4x text-muted mb-3"></i>
+                                    <h5 class="text-muted">Nenhum widget criado ainda</h5>
+                                    <p class="text-muted">Crie seu primeiro widget para começar a vender tokens</p>
+                                    <button class="btn btn-primary btn-lg" onclick="showSection('create-widget')">
+                                        <i class="fas fa-plus me-2"></i>
+                                        Criar Primeiro Widget
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Widget Section -->
+            <div id="section-create-widget" class="section-content">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-plus-circle me-2"></i>
+                                    Criar Novo Widget
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="widget-form">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="widget-name" class="form-label">Nome do Widget</label>
+                                            <input type="text" class="form-control" id="widget-name" placeholder="Ex: Venda de Token XYZ">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="token-symbol" class="form-label">Símbolo do Token</label>
+                                            <input type="text" class="form-control" id="token-symbol" placeholder="Ex: XYZ">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="token-price" class="form-label">Preço por Token (BNB)</label>
+                                            <input type="number" class="form-control" id="token-price" step="0.001" placeholder="0.001">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="total-supply" class="form-label">Total de Tokens</label>
+                                            <input type="number" class="form-control" id="total-supply" placeholder="1000000">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="widget-description" class="form-label">Descrição</label>
+                                        <textarea class="form-control" id="widget-description" rows="3" placeholder="Descrição do seu token e projeto..."></textarea>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="widget-color" class="form-label">Cor Principal</label>
+                                            <input type="color" class="form-control form-control-color" id="widget-color" value="#667eea">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="widget-style" class="form-label">Estilo</label>
+                                            <select class="form-select" id="widget-style">
+                                                <option value="modern">Moderno</option>
+                                                <option value="classic">Clássico</option>
+                                                <option value="minimal">Minimalista</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button type="button" class="btn btn-outline-secondary me-md-2" onclick="showSection('dashboard')">Cancelar</button>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save me-1"></i>
+                                            Criar Widget
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-eye me-2"></i>
+                                    Preview do Widget
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="widget-preview">
+                                    <div class="mb-3">
+                                        <i class="fas fa-cube fa-2x text-primary mb-2"></i>
+                                        <h6 id="preview-name">Nome do Widget</h6>
+                                        <p class="small text-muted" id="preview-description">Descrição aparecerá aqui...</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Símbolo:</span>
+                                            <strong id="preview-symbol">XYZ</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Preço:</span>
+                                            <strong id="preview-price">0.001 BNB</strong>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary w-100" disabled>
+                                        <i class="fas fa-shopping-cart me-1"></i>
+                                        Comprar Tokens
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Sections -->
+            <div id="section-transactions" class="section-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-exchange-alt me-2"></i>
+                            Histórico de Transações
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center py-5">
+                            <i class="fas fa-exchange-alt fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">Nenhuma transação ainda</h5>
+                            <p class="text-muted">As transações aparecerão aqui quando houver vendas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-analytics" class="section-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Análises e Relatórios
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center py-5">
+                            <i class="fas fa-chart-bar fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">Relatórios em desenvolvimento</h5>
+                            <p class="text-muted">Análises detalhadas estarão disponíveis em breve</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-credits" class="section-content">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-coins me-2"></i>
+                                    Gerenciar Créditos
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center py-4">
+                                    <i class="fas fa-coins fa-4x text-warning mb-3"></i>
+                                    <h3 class="text-warning">100 Créditos</h3>
+                                    <p class="text-muted">Você tem créditos suficientes para criar widgets</p>
+                                    <button class="btn btn-warning btn-lg" disabled>
+                                        <i class="fas fa-shopping-cart me-2"></i>
+                                        Comprar Mais Créditos
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Informações</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <small class="text-muted">Custo por Widget:</small>
+                                    <div class="fw-bold">10 Créditos</div>
+                                </div>
+                                <div class="mb-3">
+                                    <small class="text-muted">Widgets Possíveis:</small>
+                                    <div class="fw-bold">10 Widgets</div>
+                                </div>
+                                <div class="mb-0">
+                                    <small class="text-muted">Comissão do Sistema:</small>
+                                    <div class="fw-bold">2% por venda</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-settings" class="section-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-cog me-2"></i>
+                            Configurações
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center py-5">
+                            <i class="fas fa-cog fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">Configurações em desenvolvimento</h5>
+                            <p class="text-muted">Painel de configurações estará disponível em breve</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-help" class="section-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-question-circle me-2"></i>
+                            Ajuda e Suporte
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <h6>Como usar o sistema:</h6>
+                                <ol class="list-group list-group-numbered">
+                                    <li class="list-group-item">Crie um widget na seção "Criar Widget"</li>
+                                    <li class="list-group-item">Configure os dados do seu token</li>
+                                    <li class="list-group-item">Copie o código gerado</li>
+                                    <li class="list-group-item">Cole em seu site</li>
+                                    <li class="list-group-item">Monitore as vendas no dashboard</li>
+                                </ol>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Informações importantes:</h6>
+                                <ul class="list-group">
+                                    <li class="list-group-item">Sistema funciona sem necessidade de login</li>
+                                    <li class="list-group-item">Carteira opcional para funcionalidades avançadas</li>
+                                    <li class="list-group-item">Comissão automática de 2% por venda</li>
+                                    <li class="list-group-item">Suporte a rede BSC (Binance Smart Chain)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Sistema de navegação
+        console.log('🚀 Widget SaaS Dashboard carregado');
+
+        // Estado do sistema
+        let sidebarCollapsed = false;
+        let currentSection = 'dashboard';
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📱 Inicializando sistema...');
+            
+            // Setup navigation
+            setupNavigation();
+            
+            // Setup form preview
+            setupFormPreview();
+            
+            // Load initial data
+            loadDashboardData();
+            
+            console.log('✅ Sistema inicializado');
+        });
+
+        // Setup navigation
+        function setupNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link[data-section]');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = link.getAttribute('data-section');
+                    showSection(section);
+                });
+            });
+        }
+
+        // Show section
+        function showSection(sectionName) {
+            console.log(`📄 Mostrando seção: ${sectionName}`);
+            
+            // Hide all sections
+            document.querySelectorAll('.section-content').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show target section
+            const targetSection = document.getElementById(`section-${sectionName}`);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+            
+            // Update navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            const activeLink = document.querySelector(`[data-section="${sectionName}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+            
+            // Update page title
+            const titles = {
+                dashboard: 'Dashboard',
+                widgets: 'Meus Widgets',
+                'create-widget': 'Criar Widget',
+                transactions: 'Transações',
+                analytics: 'Análises',
+                credits: 'Créditos',
+                settings: 'Configurações',
+                help: 'Ajuda'
+            };
+            
+            document.getElementById('page-title').textContent = titles[sectionName] || 'Dashboard';
+            currentSection = sectionName;
+        }
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            sidebarCollapsed = !sidebarCollapsed;
+            
+            if (sidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                mainContent.classList.add('expanded');
+            } else {
+                sidebar.classList.remove('collapsed');
+                mainContent.classList.remove('expanded');
+            }
+            
+            console.log(`📱 Sidebar ${sidebarCollapsed ? 'collapsed' : 'expanded'}`);
+        }
+
+        // Connect wallet (optional)
+        async function connectWallet() {
+            console.log('🔗 Tentando conectar carteira...');
+            
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({
+                        method: 'eth_requestAccounts'
+                    });
+                    
+                    if (accounts.length > 0) {
+                        const address = accounts[0];
+                        const shortAddress = `${address.slice(0, 6)}...${address.slice(-4)}`;
+                        
+                        document.getElementById('wallet-btn').innerHTML = `
+                            <i class="fas fa-wallet me-1"></i>
+                            ${shortAddress}
+                        `;
+                        
+                        console.log('✅ Carteira conectada:', shortAddress);
+                        
+                        // Save connection
+                        localStorage.setItem('walletConnected', 'true');
+                        localStorage.setItem('walletAddress', address);
+                    }
+                } catch (error) {
+                    console.error('❌ Erro ao conectar carteira:', error);
+                    alert('Erro ao conectar carteira. Verifique se o MetaMask está instalado.');
+                }
+            } else {
+                alert('MetaMask não detectado. Por favor, instale o MetaMask para usar todas as funcionalidades.');
+            }
+        }
+
+        // Setup form preview
+        function setupFormPreview() {
+            const form = document.getElementById('widget-form');
+            if (!form) return;
+            
+            // Update preview on form changes
+            form.addEventListener('input', updatePreview);
+            form.addEventListener('change', updatePreview);
+            
+            // Handle form submission
+            form.addEventListener('submit', handleFormSubmit);
+        }
+
+        // Update preview
+        function updatePreview() {
+            const name = document.getElementById('widget-name').value || 'Nome do Widget';
+            const symbol = document.getElementById('token-symbol').value || 'XYZ';
+            const price = document.getElementById('token-price').value || '0.001';
+            const description = document.getElementById('widget-description').value || 'Descrição aparecerá aqui...';
+            
+            document.getElementById('preview-name').textContent = name;
+            document.getElementById('preview-symbol').textContent = symbol;
+            document.getElementById('preview-price').textContent = `${price} BNB`;
+            document.getElementById('preview-description').textContent = description;
+        }
+
+        // Handle form submit
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            console.log('💾 Salvando widget...');
+            
+            const formData = {
+                name: document.getElementById('widget-name').value,
+                symbol: document.getElementById('token-symbol').value,
+                price: document.getElementById('token-price').value,
+                supply: document.getElementById('total-supply').value,
+                description: document.getElementById('widget-description').value,
+                color: document.getElementById('widget-color').value,
+                style: document.getElementById('widget-style').value
+            };
+            
+            // Validate
+            if (!formData.name || !formData.symbol || !formData.price) {
+                alert('Por favor, preencha os campos obrigatórios.');
+                return;
+            }
+            
+            // Save widget (simulate)
+            console.log('📝 Dados do widget:', formData);
+            
+            // Success feedback
+            alert('Widget criado com sucesso! 🎉');
+            
+            // Reset form
+            document.getElementById('widget-form').reset();
+            updatePreview();
+            
+            // Go to widgets section
+            showSection('widgets');
+            
+            // Update counter
+            const count = document.getElementById('widgets-count');
+            count.textContent = parseInt(count.textContent) + 1;
+        }
+
+        // Load dashboard data
+        function loadDashboardData() {
+            console.log('📊 Carregando dados do dashboard...');
+            
+            // Simulate loading data
+            setTimeout(() => {
+                // Check if wallet was previously connected
+                const walletConnected = localStorage.getItem('walletConnected');
+                const walletAddress = localStorage.getItem('walletAddress');
+                
+                if (walletConnected && walletAddress) {
+                    const shortAddress = `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`;
+                    document.getElementById('wallet-btn').innerHTML = `
+                        <i class="fas fa-wallet me-1"></i>
+                        ${shortAddress}
+                    `;
+                }
+                
+                console.log('✅ Dados carregados');
+            }, 1000);
+        }
+
+        // Mobile responsiveness
+        window.addEventListener('resize', () => {
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('collapsed');
+                document.getElementById('mainContent').classList.remove('expanded');
+                sidebarCollapsed = false;
+            }
+        });
+
+        // Mobile sidebar toggle
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        // Click outside to close mobile sidebar
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                const toggle = document.querySelector('.sidebar-toggle');
+                
+                if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
+                    sidebar.classList.remove('show');
+                }
+            }
+        });
+
+        // Status logging
+        console.group('🔧 SISTEMA STATUS');
+        console.log('📱 Responsivo:', window.innerWidth <= 768 ? 'Mobile' : 'Desktop');
+        console.log('🌐 MetaMask:', typeof window.ethereum !== 'undefined' ? '✅' : '❌');
+        console.log('🎨 Bootstrap:', typeof bootstrap !== 'undefined' ? '✅' : '❌');
+        console.groupEnd();
+    </script>
+</body>
+</html>

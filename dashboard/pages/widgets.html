@@ -1,59 +1,741 @@
-<!-- Widgets Page -->
+<!-- Widgets Management Page -->
 <div class="widgets-section">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>🧩 Meus Widgets de Venda</h2>
-        <div class="d-flex gap-2">
-            <button class="btn btn-primary" onclick="dashboardManager.showSection('new-widget')">
-                <i class="fas fa-plus"></i> Criar Widget
-            </button>
-            <button class="btn btn-outline-primary" onclick="dashboardManager.refreshWidgets()">
-                <i class="fas fa-sync-alt"></i> Atualizar
-            </button>
+    <!-- Header com Statistics -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="mb-0">
+                    <i class="fas fa-cube me-2 text-primary"></i>
+                    Meus Widgets
+                </h2>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" onclick="toggleView()">
+                        <i class="fas fa-th-large me-1" id="view-icon"></i>
+                        <span id="view-text">Grade</span>
+                    </button>
+                    <button class="btn btn-primary" onclick="loadSection('new-widget'); updateActiveMenu('new-widget');">
+                        <i class="fas fa-plus me-1"></i>Criar Widget
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card border-0 bg-primary text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="mb-1">Total de Widgets</h6>
+                                    <h3 class="mb-0" id="total-widgets">0</h3>
+                                </div>
+                                <i class="fas fa-cube fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 bg-success text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="mb-1">Widgets Ativos</h6>
+                                    <h3 class="mb-0" id="active-widgets">0</h3>
+                                </div>
+                                <i class="fas fa-play fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 bg-info text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="mb-1">Vendas Hoje</h6>
+                                    <h3 class="mb-0" id="today-sales">0</h3>
+                                </div>
+                                <i class="fas fa-chart-line fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 bg-warning text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="mb-1">Receita Total</h6>
+                                    <h3 class="mb-0" id="total-revenue">0 BNB</h3>
+                                </div>
+                                <i class="fas fa-coins fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Filtros -->
-    <div class="card mb-4">
+    <!-- Filtros e Busca -->
+    <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
-            <div class="row g-3">
+            <div class="row g-3 align-items-end">
                 <div class="col-md-3">
-                    <label class="form-label">Status</label>
-                    <select class="form-select" id="filter-status">
-                        <option value="">Todos</option>
-                        <option value="active">Ativo</option>
-                        <option value="paused">Pausado</option>
-                        <option value="draft">Rascunho</option>
+                    <label class="form-label small text-muted">Status</label>
+                    <select class="form-select" id="filter-status" onchange="filterWidgets()">
+                        <option value="">Todos os status</option>
+                        <option value="active">🟢 Ativo</option>
+                        <option value="paused">🟡 Pausado</option>
+                        <option value="draft">⚪ Rascunho</option>
+                        <option value="inactive">🔴 Inativo</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Período</label>
-                    <select class="form-select" id="filter-period">
-                        <option value="">Todos</option>
-                        <option value="week">Última semana</option>
-                        <option value="month">Último mês</option>
-                        <option value="quarter">Último trimestre</option>
+                    <label class="form-label small text-muted">Rede</label>
+                    <select class="form-select" id="filter-network" onchange="filterWidgets()">
+                        <option value="">Todas as redes</option>
+                        <option value="56">🟡 BSC Mainnet</option>
+                        <option value="1">🔵 Ethereum</option>
+                        <option value="137">🟣 Polygon</option>
+                        <option value="97">⚪ BSC Testnet</option>
                     </select>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Buscar</label>
-                    <input type="text" class="form-control" id="search-widgets" placeholder="Nome do token ou widget...">
+                <div class="col-md-4">
+                    <label class="form-label small text-muted">Buscar</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="search-widgets" placeholder="Nome, símbolo ou descrição..." oninput="filterWidgets()">
+                        <button class="btn btn-outline-secondary" type="button" onclick="clearSearch()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-outline-primary w-100" onclick="refreshWidgets()">
+                        <i class="fas fa-sync-alt me-1"></i>Atualizar
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Lista de Widgets -->
-    <div id="widgets-list">
-        <div class="text-center py-5">
-            <i class="fas fa-search fa-3x text-muted mb-3"></i>
-            <p class="mt-3">Verificando widgets...</p>
+    <div id="widgets-container">
+        <!-- Grid View -->
+        <div id="grid-view" class="row g-4">
+            <!-- Widgets serão carregados aqui dinamicamente -->
+        </div>
+        
+        <!-- List View -->
+        <div id="list-view" style="display: none;">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <div class="row fw-bold text-muted small">
+                        <div class="col-md-3">Widget</div>
+                        <div class="col-md-2">Status</div>
+                        <div class="col-md-2">Vendas</div>
+                        <div class="col-md-2">Receita</div>
+                        <div class="col-md-2">Criado</div>
+                        <div class="col-md-1">Ações</div>
+                    </div>
+                </div>
+                <div class="card-body p-0" id="list-container">
+                    <!-- Lista será carregada aqui -->
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Empty State -->
+    <div id="empty-state" class="text-center py-5" style="display: none;">
+        <div class="mb-4">
+            <i class="fas fa-cube fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">Nenhum widget encontrado</h4>
+            <p class="text-muted">Comece criando seu primeiro widget de venda de tokens!</p>
+        </div>
+        <button class="btn btn-primary btn-lg" onclick="loadSection('new-widget'); updateActiveMenu('new-widget');">
+            <i class="fas fa-plus me-2"></i>Criar Primeiro Widget
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="text-center py-5">
+        <div class="spinner-border text-primary mb-3" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+        <p class="text-muted">Carregando widgets...</p>
+    </div>
+
     <!-- Paginação -->
-    <nav aria-label="Widgets pagination" id="widgets-pagination" style="display: none;">
-        <ul class="pagination justify-content-center">
-            <!-- Será preenchido dinamicamente -->
+    <nav aria-label="Paginação de widgets" id="pagination-container" style="display: none;">
+        <ul class="pagination justify-content-center mt-4" id="pagination">
+            <!-- Paginação será gerada dinamicamente -->
         </ul>
     </nav>
 </div>
+
+<!-- Modal de Detalhes do Widget -->
+<div class="modal fade" id="widgetModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalhes do Widget</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modal-content">
+                <!-- Conteúdo será carregado dinamicamente -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentView = 'grid';
+let currentPage = 1;
+let itemsPerPage = 12;
+let allWidgets = [];
+let filteredWidgets = [];
+
+// Carregar widgets do localStorage ou dados de exemplo
+function loadWidgets() {
+    // Verificar se existem widgets no localStorage
+    let widgets = JSON.parse(localStorage.getItem('widgets') || '[]');
+    
+    // Se não há widgets, criar alguns de exemplo
+    if (widgets.length === 0) {
+        widgets = [
+            {
+                id: 'widget_demo_1',
+                name: 'Token Demo XYZ',
+                symbol: 'XYZ',
+                description: 'Token de demonstração para testes',
+                price: 0.001,
+                totalSupply: 1000000,
+                sold: 25000,
+                revenue: 25,
+                status: 'active',
+                network: '56',
+                color: '#667eea',
+                style: 'modern',
+                createdAt: new Date(Date.now() - 86400000 * 7).toISOString()
+            },
+            {
+                id: 'widget_demo_2',
+                name: 'Gaming Token ABC',
+                symbol: 'ABC',
+                description: 'Token para plataforma de jogos',
+                price: 0.0025,
+                totalSupply: 500000,
+                sold: 12500,
+                revenue: 31.25,
+                status: 'active',
+                network: '1',
+                color: '#f093fb',
+                style: 'gradient',
+                createdAt: new Date(Date.now() - 86400000 * 3).toISOString()
+            },
+            {
+                id: 'widget_demo_3',
+                name: 'DeFi Token DEF',
+                symbol: 'DEF',
+                description: 'Token para protocolo DeFi',
+                price: 0.005,
+                totalSupply: 200000,
+                sold: 5000,
+                revenue: 25,
+                status: 'paused',
+                network: '137',
+                color: '#4facfe',
+                style: 'minimal',
+                createdAt: new Date(Date.now() - 86400000 * 1).toISOString()
+            }
+        ];
+        localStorage.setItem('widgets', JSON.stringify(widgets));
+    }
+    
+    allWidgets = widgets;
+    filteredWidgets = [...allWidgets];
+    updateStats();
+    renderWidgets();
+}
+
+// Atualizar estatísticas
+function updateStats() {
+    document.getElementById('total-widgets').textContent = allWidgets.length;
+    document.getElementById('active-widgets').textContent = allWidgets.filter(w => w.status === 'active').length;
+    
+    const todaySales = allWidgets.reduce((sum, widget) => {
+        // Simular vendas de hoje
+        return sum + Math.floor(Math.random() * 10);
+    }, 0);
+    document.getElementById('today-sales').textContent = todaySales;
+    
+    const totalRevenue = allWidgets.reduce((sum, widget) => sum + (widget.revenue || 0), 0);
+    document.getElementById('total-revenue').textContent = totalRevenue.toFixed(3) + ' BNB';
+}
+
+// Alternar entre views
+function toggleView() {
+    const gridView = document.getElementById('grid-view');
+    const listView = document.getElementById('list-view');
+    const viewIcon = document.getElementById('view-icon');
+    const viewText = document.getElementById('view-text');
+    
+    if (currentView === 'grid') {
+        gridView.style.display = 'none';
+        listView.style.display = 'block';
+        viewIcon.className = 'fas fa-list me-1';
+        viewText.textContent = 'Lista';
+        currentView = 'list';
+    } else {
+        gridView.style.display = 'block';
+        listView.style.display = 'none';
+        viewIcon.className = 'fas fa-th-large me-1';
+        viewText.textContent = 'Grade';
+        currentView = 'grid';
+    }
+    renderWidgets();
+}
+
+// Filtrar widgets
+function filterWidgets() {
+    const statusFilter = document.getElementById('filter-status').value;
+    const networkFilter = document.getElementById('filter-network').value;
+    const searchQuery = document.getElementById('search-widgets').value.toLowerCase();
+    
+    filteredWidgets = allWidgets.filter(widget => {
+        const matchesStatus = !statusFilter || widget.status === statusFilter;
+        const matchesNetwork = !networkFilter || widget.network === networkFilter;
+        const matchesSearch = !searchQuery || 
+            widget.name.toLowerCase().includes(searchQuery) ||
+            widget.symbol.toLowerCase().includes(searchQuery) ||
+            (widget.description && widget.description.toLowerCase().includes(searchQuery));
+        
+        return matchesStatus && matchesNetwork && matchesSearch;
+    });
+    
+    currentPage = 1;
+    renderWidgets();
+}
+
+// Limpar busca
+function clearSearch() {
+    document.getElementById('search-widgets').value = '';
+    document.getElementById('filter-status').value = '';
+    document.getElementById('filter-network').value = '';
+    filterWidgets();
+}
+
+// Renderizar widgets
+function renderWidgets() {
+    const container = currentView === 'grid' ? 
+        document.getElementById('grid-view') : 
+        document.getElementById('list-container');
+    
+    if (filteredWidgets.length === 0) {
+        document.getElementById('empty-state').style.display = 'block';
+        document.getElementById('loading-state').style.display = 'none';
+        container.innerHTML = '';
+        return;
+    }
+    
+    document.getElementById('empty-state').style.display = 'none';
+    document.getElementById('loading-state').style.display = 'none';
+    
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const pageWidgets = filteredWidgets.slice(startIndex, endIndex);
+    
+    if (currentView === 'grid') {
+        renderGridView(pageWidgets, container);
+    } else {
+        renderListView(pageWidgets, container);
+    }
+    
+    renderPagination();
+}
+
+// Renderizar view em grade
+function renderGridView(widgets, container) {
+    container.innerHTML = widgets.map(widget => {
+        const statusColor = getStatusColor(widget.status);
+        const networkName = getNetworkName(widget.network);
+        
+        return `
+            <div class="col-lg-4 col-md-6">
+                <div class="card border-0 shadow-sm h-100 widget-card" data-widget-id="${widget.id}">
+                    <div class="card-header bg-white border-bottom-0 pb-0">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">${widget.name}</h6>
+                                <span class="badge bg-light text-dark">${widget.symbol}</span>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" onclick="viewWidget('${widget.id}')">
+                                        <i class="fas fa-eye me-2"></i>Ver Detalhes
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="editWidget('${widget.id}')">
+                                        <i class="fas fa-edit me-2"></i>Editar
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="duplicateWidget('${widget.id}')">
+                                        <i class="fas fa-copy me-2"></i>Duplicar
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteWidget('${widget.id}')">
+                                        <i class="fas fa-trash me-2"></i>Excluir
+                                    </a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between small text-muted mb-1">
+                                <span>Status:</span>
+                                <span class="badge ${statusColor}">${getStatusText(widget.status)}</span>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mb-1">
+                                <span>Rede:</span>
+                                <span>${networkName}</span>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mb-1">
+                                <span>Preço:</span>
+                                <strong>${widget.price} BNB</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="progress mb-2" style="height: 6px;">
+                            <div class="progress-bar" style="width: ${(widget.sold / widget.totalSupply * 100)}%; background-color: ${widget.color};">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between small text-muted">
+                            <span>${widget.sold.toLocaleString()} vendidos</span>
+                            <span>${widget.totalSupply.toLocaleString()} total</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <div class="d-grid gap-2 d-md-flex">
+                            <button class="btn btn-outline-primary btn-sm flex-grow-1" onclick="viewWidget('${widget.id}')">
+                                <i class="fas fa-eye me-1"></i>Ver
+                            </button>
+                            <button class="btn btn-primary btn-sm flex-grow-1" onclick="editWidget('${widget.id}')">
+                                <i class="fas fa-edit me-1"></i>Editar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Renderizar view em lista
+function renderListView(widgets, container) {
+    container.innerHTML = widgets.map(widget => {
+        const statusColor = getStatusColor(widget.status);
+        const networkName = getNetworkName(widget.network);
+        
+        return `
+            <div class="row py-3 border-bottom align-items-center widget-row" data-widget-id="${widget.id}">
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <div class="rounded" style="width: 40px; height: 40px; background: ${widget.color}; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-cube text-white"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">${widget.name}</h6>
+                            <small class="text-muted">${widget.symbol}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <span class="badge ${statusColor}">${getStatusText(widget.status)}</span>
+                    <br><small class="text-muted">${networkName}</small>
+                </div>
+                <div class="col-md-2">
+                    <strong>${widget.sold.toLocaleString()}</strong>
+                    <br><small class="text-muted">de ${widget.totalSupply.toLocaleString()}</small>
+                </div>
+                <div class="col-md-2">
+                    <strong>${(widget.revenue || 0).toFixed(3)} BNB</strong>
+                    <br><small class="text-muted">${widget.price} BNB/token</small>
+                </div>
+                <div class="col-md-2">
+                    <small>${new Date(widget.createdAt).toLocaleDateString('pt-BR')}</small>
+                </div>
+                <div class="col-md-1">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="viewWidget('${widget.id}')">
+                                <i class="fas fa-eye me-2"></i>Ver
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="editWidget('${widget.id}')">
+                                <i class="fas fa-edit me-2"></i>Editar
+                            </a></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="deleteWidget('${widget.id}')">
+                                <i class="fas fa-trash me-2"></i>Excluir
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Funções auxiliares
+function getStatusColor(status) {
+    const colors = {
+        'active': 'bg-success',
+        'paused': 'bg-warning',
+        'draft': 'bg-secondary',
+        'inactive': 'bg-danger'
+    };
+    return colors[status] || 'bg-secondary';
+}
+
+function getStatusText(status) {
+    const texts = {
+        'active': 'Ativo',
+        'paused': 'Pausado',
+        'draft': 'Rascunho',
+        'inactive': 'Inativo'
+    };
+    return texts[status] || 'Desconhecido';
+}
+
+function getNetworkName(networkId) {
+    const networks = {
+        '1': 'Ethereum',
+        '56': 'BSC',
+        '137': 'Polygon',
+        '97': 'BSC Testnet'
+    };
+    return networks[networkId] || 'Desconhecida';
+}
+
+// Renderizar paginação
+function renderPagination() {
+    const totalPages = Math.ceil(filteredWidgets.length / itemsPerPage);
+    const paginationContainer = document.getElementById('pagination-container');
+    const pagination = document.getElementById('pagination');
+    
+    if (totalPages <= 1) {
+        paginationContainer.style.display = 'none';
+        return;
+    }
+    
+    paginationContainer.style.display = 'block';
+    
+    let paginationHTML = '';
+    
+    // Página anterior
+    paginationHTML += `
+        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Anterior</a>
+        </li>
+    `;
+    
+    // Páginas
+    for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+            paginationHTML += `
+                <li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                </li>
+            `;
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+            paginationHTML += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+        }
+    }
+    
+    // Próxima página
+    paginationHTML += `
+        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Próxima</a>
+        </li>
+    `;
+    
+    pagination.innerHTML = paginationHTML;
+}
+
+// Mudar página
+function changePage(page) {
+    const totalPages = Math.ceil(filteredWidgets.length / itemsPerPage);
+    if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        renderWidgets();
+    }
+}
+
+// Ações dos widgets
+function viewWidget(widgetId) {
+    const widget = allWidgets.find(w => w.id === widgetId);
+    if (!widget) return;
+    
+    const modal = document.getElementById('widgetModal');
+    const modalContent = document.getElementById('modal-content');
+    
+    modalContent.innerHTML = `
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="text-primary mb-3">Informações Básicas</h6>
+                <table class="table table-sm">
+                    <tr><td>Nome:</td><td><strong>${widget.name}</strong></td></tr>
+                    <tr><td>Símbolo:</td><td><strong>${widget.symbol}</strong></td></tr>
+                    <tr><td>Descrição:</td><td>${widget.description || 'N/A'}</td></tr>
+                    <tr><td>Status:</td><td><span class="badge ${getStatusColor(widget.status)}">${getStatusText(widget.status)}</span></td></tr>
+                    <tr><td>Rede:</td><td>${getNetworkName(widget.network)}</td></tr>
+                    <tr><td>Criado em:</td><td>${new Date(widget.createdAt).toLocaleDateString('pt-BR')}</td></tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-primary mb-3">Dados de Venda</h6>
+                <table class="table table-sm">
+                    <tr><td>Preço:</td><td><strong>${widget.price} BNB</strong></td></tr>
+                    <tr><td>Total disponível:</td><td>${widget.totalSupply.toLocaleString()}</td></tr>
+                    <tr><td>Vendidos:</td><td>${widget.sold.toLocaleString()}</td></tr>
+                    <tr><td>Restantes:</td><td>${(widget.totalSupply - widget.sold).toLocaleString()}</td></tr>
+                    <tr><td>Receita:</td><td><strong>${(widget.revenue || 0).toFixed(3)} BNB</strong></td></tr>
+                    <tr><td>Progresso:</td><td>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar" style="width: ${(widget.sold / widget.totalSupply * 100)}%; background-color: ${widget.color};"></div>
+                        </div>
+                        ${(widget.sold / widget.totalSupply * 100).toFixed(1)}%
+                    </td></tr>
+                </table>
+            </div>
+        </div>
+        <div class="mt-4">
+            <h6 class="text-primary mb-3">Preview do Widget</h6>
+            <div class="border rounded p-3 text-center" style="background: linear-gradient(135deg, ${widget.color}, ${widget.color}44);">
+                <h5 class="text-white mb-2">${widget.name}</h5>
+                <div class="bg-white rounded p-3 d-inline-block">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <h6 class="text-primary">${widget.symbol}</h6>
+                            <small class="text-muted">Token</small>
+                        </div>
+                        <div class="col-4">
+                            <h6 class="text-success">${widget.price} BNB</h6>
+                            <small class="text-muted">Preço</small>
+                        </div>
+                        <div class="col-4">
+                            <h6 class="text-info">${(widget.totalSupply - widget.sold).toLocaleString()}</h6>
+                            <small class="text-muted">Disponível</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+}
+
+function editWidget(widgetId) {
+    // Simular edição - por enquanto apenas alerta
+    alert(`Funcionalidade de edição para widget ${widgetId} será implementada em breve!`);
+}
+
+function duplicateWidget(widgetId) {
+    const widget = allWidgets.find(w => w.id === widgetId);
+    if (!widget) return;
+    
+    const newWidget = {
+        ...widget,
+        id: 'widget_' + Date.now(),
+        name: widget.name + ' (Cópia)',
+        sold: 0,
+        revenue: 0,
+        createdAt: new Date().toISOString()
+    };
+    
+    allWidgets.push(newWidget);
+    localStorage.setItem('widgets', JSON.stringify(allWidgets));
+    
+    filterWidgets();
+    updateStats();
+    
+    // Mostrar notificação
+    const alert = document.createElement('div');
+    alert.className = 'alert alert-success alert-dismissible fade show position-fixed';
+    alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999;';
+    alert.innerHTML = `
+        <i class="fas fa-copy me-2"></i>
+        Widget duplicado com sucesso!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(alert);
+    
+    setTimeout(() => alert.remove(), 3000);
+}
+
+function deleteWidget(widgetId) {
+    if (!confirm('Tem certeza que deseja excluir este widget? Esta ação não pode ser desfeita.')) {
+        return;
+    }
+    
+    const widgetIndex = allWidgets.findIndex(w => w.id === widgetId);
+    if (widgetIndex > -1) {
+        allWidgets.splice(widgetIndex, 1);
+        localStorage.setItem('widgets', JSON.stringify(allWidgets));
+        
+        filterWidgets();
+        updateStats();
+        
+        // Mostrar notificação
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-warning alert-dismissible fade show position-fixed';
+        alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999;';
+        alert.innerHTML = `
+            <i class="fas fa-trash me-2"></i>
+            Widget excluído com sucesso!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(alert);
+        
+        setTimeout(() => alert.remove(), 3000);
+    }
+}
+
+function refreshWidgets() {
+    document.getElementById('loading-state').style.display = 'block';
+    document.getElementById('grid-view').innerHTML = '';
+    document.getElementById('list-container').innerHTML = '';
+    
+    // Simular carregamento
+    setTimeout(() => {
+        loadWidgets();
+    }, 1000);
+}
+
+// Carregar widgets quando a página carrega
+document.addEventListener('DOMContentLoaded', function() {
+    loadWidgets();
+});
+
+// Adicionar estilos para hover nos cards
+const style = document.createElement('style');
+style.textContent = `
+    .widget-card:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s ease-in-out;
+    }
+    
+    .widget-row:hover {
+        background-color: #f8f9fa;
+    }
+`;
+document.head.appendChild(style);
+</script>
