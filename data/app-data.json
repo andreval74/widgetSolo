@@ -1,0 +1,15 @@
+{
+  "users": [],
+  "widgets": [],
+  "transactions": [],
+  "credits": [],
+  "api_keys": [],
+  "system_stats": {
+    "totalUsers": 0,
+    "totalWidgets": 0,
+    "totalTransactions": 0,
+    "totalVolume": 0,
+    "totalCredits": 0,
+    "lastUpdated": "2025-09-30T00:00:00.000Z"
+  }
+}

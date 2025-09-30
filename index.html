@@ -250,7 +250,7 @@
 
         <main class="main-content">
             <div class="content-card">
-                <div id="page-content">
+                <div id="main-content">
                     <div class="loading">
                         <i class="fas fa-spinner"></i>
                         <div>Carregando...</div>
@@ -261,54 +261,58 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="src/ui/unified-dashboard-manager.js"></script>
+    
     <script>
-        async function loadSection(sectionName) {
-            try {
-                console.log('Carregando seção:', sectionName);
-                
-                document.getElementById('page-content').innerHTML = '<div class="loading"><i class="fas fa-spinner"></i><div>Carregando ' + sectionName + '...</div></div>';
+        // Script de fallback caso o unified manager não carregue
+        if (!window.dashboardManager) {
+            console.log('⚠️ Fallback: Carregando sistema básico de navegação');
+            
+            async function loadSection(sectionName) {
+                try {
+                    const content = document.getElementById('main-content');
+                    content.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i><div>Carregando ' + sectionName + '...</div></div>';
 
-                const response = await fetch('dashboard/pages/' + sectionName + '.html');
-                
-                if (response.ok) {
-                    const content = await response.text();
-                    document.getElementById('page-content').innerHTML = content;
-                    console.log('Seção carregada:', sectionName);
-                } else {
-                    document.getElementById('page-content').innerHTML = '<div class="text-center text-danger"><h3>Erro ao carregar</h3><p>Página: ' + sectionName + '</p><button class="btn btn-primary" onclick="loadSection(\'overview\')">Voltar</button></div>';
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                document.getElementById('page-content').innerHTML = '<div class="text-center text-danger"><h3>Erro de Conexão</h3><button class="btn btn-primary" onclick="loadSection(\'overview\')">Tentar Novamente</button></div>';
-            }
-        }
-
-        function updateActiveMenu(sectionName) {
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            const activeLink = document.querySelector('[data-section="' + sectionName + '"]');
-            if (activeLink) activeLink.classList.add('active');
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Dashboard iniciado');
-
-            document.querySelectorAll('.nav-link[data-section]').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const section = this.getAttribute('data-section');
-                    console.log('Clique no menu:', section);
+                    const response = await fetch('dashboard/pages/' + sectionName + '.html');
                     
-                    if (section) {
-                        loadSection(section);
-                        updateActiveMenu(section);
+                    if (response.ok) {
+                        const html = await response.text();
+                        content.innerHTML = html;
+                        updateActiveMenu(sectionName);
+                    } else {
+                        content.innerHTML = '<div class="text-center text-danger"><h3>Erro ao carregar</h3><p>Página: ' + sectionName + '</p></div>';
                     }
-                });
-            });
+                } catch (error) {
+                    console.error('Erro:', error);
+                    document.getElementById('main-content').innerHTML = '<div class="text-center text-danger"><h3>Erro de Conexão</h3></div>';
+                }
+            }
 
-            console.log('Navegação configurada');
-            loadSection('overview');
-        });
+            function updateActiveMenu(sectionName) {
+                document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+                const activeLink = document.querySelector('[data-section="' + sectionName + '"]');
+                if (activeLink) activeLink.classList.add('active');
+            }
+
+            // Configurar navegação básica
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.nav-link[data-section]').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const section = this.getAttribute('data-section');
+                        if (section) {
+                            loadSection(section);
+                        }
+                    });
+                });
+
+                loadSection('overview');
+            });
+            
+            // Definir funções globais de fallback
+            window.loadSection = loadSection;
+            window.updateActiveMenu = updateActiveMenu;
+        }
     </script>
 </body>
 </html>
