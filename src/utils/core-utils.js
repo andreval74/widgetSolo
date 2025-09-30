@@ -382,4 +382,4 @@ window.utils = {
     removeClass: CoreUtils.removeClass
 };
 
-console.log('🛠️ CoreUtils - Utilitários centralizados carregados com sucesso!');
+console.log('🛠️ CoreUtils - Utilitários centralizados carregados com sucesso!');localStorage.clear
